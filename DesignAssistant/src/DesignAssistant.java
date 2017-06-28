@@ -30,7 +30,7 @@ public class DesignAssistant {
 	private final int graph_width = yMax+75;
 	private final int graph_height = xMax+75;
 	private final int numOrbits = 5;
-	private final String preDataFile = "/Users/Nikhil/Desktop/git_repo/DesignAssistant/EOSS_data.csv";
+	private final String preDataFile = "/Users/Nikhil/Desktop/git_repo/design_assistant/DesignAssistant/EOSS_data.csv";
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
 	
@@ -161,9 +161,9 @@ public class DesignAssistant {
 					new Thread(new Runnable() {
 						public void run() {
 							double[] point = thisAssistant.evaluateArchitecture(currentConfig);
+							System.out.println("Science: " + point[0] + " Cost: " + point[1]);
 							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
 							graphDisplayComponent.addGraphPoint(nextPoint);
-						
 						}
 					}).start();
 				}	
@@ -177,7 +177,7 @@ public class DesignAssistant {
 				currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
-				if(currentReferenceConfig.equals(new Configuration())) {
+				if(!currentReferenceConfig.equals(new Configuration())) {
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
@@ -185,7 +185,6 @@ public class DesignAssistant {
 							for(int i = 0; i < agentConfigs.length; i++) {
 								Configuration agentConfiguration = new Configuration(agentConfigs[i]);
 								double[] point = thisAssistant.evaluateArchitecture(agentConfiguration);
-								System.out.println("HEREHERE");
 								GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
 								agentPoint.fromAgent = true;
 								graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
@@ -282,7 +281,7 @@ public static void main(String argv[]) {
 		switch (argv.length) {
 			case 1:
 				try { 
-					client = new TuioClient( Integer.parseInt(argv[0])); 
+					client = new TuioClient(Integer.parseInt(argv[0])); 
 				} catch (Exception e) {
 					System.out.println("usage: java TuioDemo [port]");
 					System.exit(0);

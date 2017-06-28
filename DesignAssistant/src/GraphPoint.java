@@ -64,6 +64,7 @@ public class GraphPoint extends JComponent{
 		isSelected = false;
 		isPrevPoint = false;
 		isInFilter = false;
+		fromAgent = false;
 		this.isPreData = isPreData;
 	}
 	
@@ -83,8 +84,7 @@ public class GraphPoint extends JComponent{
 			g.setColor(Color.red);
 		
 		if(isPrevPoint) {
-			Color c = new Color(Color.red.getRed(), Color.red.getGreen(), Color.red.getBlue(), 100);
-			g.setColor(c);
+			g.setColor(Color.pink);
 		}
 		
 		//Draw the graph point
