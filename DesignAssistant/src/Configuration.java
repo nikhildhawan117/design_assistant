@@ -179,8 +179,8 @@ public class Configuration {
 			int y = i*orbitHeight+init_padding+between_padding;
 			int k = 0;
 			for(int j = 0; j < orbits[i].length(); j++) {
-				//x+=5;
 				g.setColor(Color.black);
+				//x+=5;
 				s = new Rectangle2D.Float(x,y,TuioBlock.block_size,TuioBlock.block_size);
 				((Graphics2D)g).draw(s);
 				//10 and 20 represent position of letter (instrument type) in square
