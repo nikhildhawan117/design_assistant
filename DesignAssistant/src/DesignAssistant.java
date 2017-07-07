@@ -30,7 +30,7 @@ public class DesignAssistant {
 	private final int graph_width = yMax+75;
 	private final int graph_height = xMax+75;
 	private final int numOrbits = 5;
-	private final String preDataFile = "/Users/Nikhil/Desktop/git_repo/DesignAssistant/EOSS_data.csv";
+	private final String preDataFile = "./EOSS_data.csv";
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
 	
@@ -212,7 +212,7 @@ public class DesignAssistant {
 	
 	public void initRBSAEOSS() { 
         // Set a path to the project folder
-        String path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval";
+        String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
         AE = ArchitectureEvaluator.getInstance();
