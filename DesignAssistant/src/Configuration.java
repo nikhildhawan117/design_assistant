@@ -166,27 +166,30 @@ public class Configuration {
 	}
 	
 	public void paintConfig(Graphics g, int orbitHeight, int numOrbits) {
-
-		int numRows = orbitHeight/(TuioBlock.block_size+5);
+		//initial padding between top of orbit and first row
+		int init_padding = 20;
+		//padding between markers
+		int between_padding = 5;
+		int numRows = (orbitHeight - init_padding)/(TuioBlock.block_size+between_padding);
 		int numCols = orbit_space_width/(TuioBlock.block_size+5);
 		Shape s = new Rectangle2D.Float(0,0,TuioBlock.block_size,TuioBlock.block_size);
 		Color originalColor = g.getColor();
 		for(int i = 0; i < numOrbits; i++) {
-			int x = 0;
-			int y = i*orbitHeight+5;
+			int x = between_padding;
+			int y = i*orbitHeight+init_padding+between_padding;
 			int k = 0;
 			for(int j = 0; j < orbits[i].length(); j++) {
-				x+=5;
+				//x+=5;
 				g.setColor(Color.black);
 				s = new Rectangle2D.Float(x,y,TuioBlock.block_size,TuioBlock.block_size);
 				((Graphics2D)g).draw(s);
 				//10 and 20 represent position of letter (instrument type) in square
 				g.drawString(orbits[i].substring(j, j+1),x+10,y+20);
-				x+= (5+TuioBlock.block_size);
+				x+= (between_padding+TuioBlock.block_size);
 				k++;
 				if(k>numCols) {
 					//blocks are separated by 5 pixels
-					y+= (5+TuioBlock.block_size);
+					y+= (between_padding+TuioBlock.block_size);
 					x = 0;
 				}
 				if(k > numCols*numRows) {

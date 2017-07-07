@@ -25,8 +25,8 @@ public class DesignAssistant {
 	private final int yMax = 825+50; //(1/12)x (0,9981), with a 50px margin of error (some of the points were above the plot)
 	private final double xScale = 4000;
 	private final double yScale = 1/12.0;
-	private final int table_width = 640;
-	private final int table_height = 480;
+	private final int table_width = 1400;
+	private final int table_height = 800;
 	private final int graph_width = yMax+75;
 	private final int graph_height = xMax+75;
 	private final int numOrbits = 5;
