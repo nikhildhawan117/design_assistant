@@ -17,8 +17,10 @@ public class PointMouseAdapter extends MouseAdapter {
 	}
 	
 	public void mouseClicked(MouseEvent e) {
+	
 		
 		if(e.getButton()==MouseEvent.BUTTON1){
+			System.out.println(e.getX() + " " + e.getY());
 			int x = e.getX();
 			int y = e.getY();
 			String key = String.format("%d%d", x,y);

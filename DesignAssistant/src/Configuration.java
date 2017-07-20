@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.util.*;
 import java.util.function.Function;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.*;
 
 import TUIO.*;
@@ -69,22 +70,28 @@ public class Configuration {
 			
 			//handles blocks in the global filter zone
 			if(x > orbit_space_width) {
+				//if no clusters yet, create the first cluster containing this block and add to the cluster list
 				if(clusters.size() == 0)
 					clusters.add(new Cluster(tblock, clusterWidthThreshold));
-				
+				//otherwise, check the current clusters to see if it matches any
 				else{
 					boolean clustered = false;
+					//this is in case a single block fits in more than one clusters, in which case we merge them
 					Stack<Cluster> matched = new Stack<Cluster>(); //track which clusters match, to merge
+					//try adding the block to each of the current clusters
 					for(Cluster c : clusters){
+						//if it fits in a current cluster, 
 						if(c.addtoCluster(tblock)){
 							clustered = true;
 							matched.push(c);
-							System.out.println("OH ITS GOOD ASAP");
+							//System.out.println("OH ITS GOOD ASAP");
 						}
 					}
+					//if not clustered in any current, create a new cluster
 					if(!clustered){
 						clusters.add(new Cluster(tblock, clusterWidthThreshold));
 					}
+					//otherwise, check to see if we need to merge any
 					else{
 						Cluster primary = matched.pop(); 
 						while(!matched.isEmpty()){
@@ -167,9 +174,9 @@ public class Configuration {
 	
 	public void paintConfig(Graphics g, int orbitHeight, int numOrbits) {
 		//initial padding between top of orbit and first row
-		int init_padding = 20;
+		int init_padding = 10;
 		//padding between markers
-		int between_padding = 5;
+		int between_padding = 15;
 		int numRows = (orbitHeight - init_padding)/(TuioBlock.block_size+between_padding);
 		int numCols = orbit_space_width/(TuioBlock.block_size+5);
 		Shape s = new Rectangle2D.Float(0,0,TuioBlock.block_size,TuioBlock.block_size);
@@ -179,12 +186,16 @@ public class Configuration {
 			int y = i*orbitHeight+init_padding+between_padding;
 			int k = 0;
 			for(int j = 0; j < orbits[i].length(); j++) {
-				g.setColor(Color.black);
+				g.setColor(Color.white);
 				//x+=5;
-				s = new Rectangle2D.Float(x,y,TuioBlock.block_size,TuioBlock.block_size);
+				s = new RoundRectangle2D.Float((float)x,(float)y,(float)TuioBlock.block_size,(float)TuioBlock.block_size,(float)TuioBlock.block_size/8,(float)TuioBlock.block_size/8);
+				
+				Stroke oldStroke = ((Graphics2D)g).getStroke();
+				((Graphics2D)g).setStroke(new BasicStroke(5F));
 				((Graphics2D)g).draw(s);
+				((Graphics2D)g).setStroke(oldStroke);
 				//10 and 20 represent position of letter (instrument type) in square
-				g.drawString(orbits[i].substring(j, j+1),x+10,y+20);
+				g.drawString(orbits[i].substring(j, j+1),x+10,y+50);
 				x+= (between_padding+TuioBlock.block_size);
 				k++;
 				if(k>numCols) {

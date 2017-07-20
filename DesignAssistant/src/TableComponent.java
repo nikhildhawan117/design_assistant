@@ -47,9 +47,9 @@ public class TableComponent extends JComponent{
 		//we will divide this into our orbits
 		int orbitHeight = largestHeight/this.numOrbits;
 		int orbitWidth = (int)(width*0.7);
-		//Font currentFont = g.getFont();
-		//Font newFont = currentFont.deriveFont(currentFont.getSize() * 4F);
-		//g.setFont(newFont);
+		Font currentFont = g.getFont();
+		Font newFont = currentFont.deriveFont(currentFont.getSize() * 4F);
+		g.setFont(newFont);
 		
 		//paint the orbits and orbit lists
 		int j = 0;
@@ -59,7 +59,7 @@ public class TableComponent extends JComponent{
 			g.setColor(this.orbitColors[colorIndex]);
 			g.fillRect(0, i, orbitWidth, orbitHeight);
 			g.setColor(Color.white);
-			g.drawString(currentConfig.toFancyString()[j], 10, i+20);
+			g.drawString(currentConfig.toFancyString()[j], 10, i+orbitHeight/2+80);
 			j++;
 			
 		}
@@ -71,7 +71,18 @@ public class TableComponent extends JComponent{
 		g.setColor(Color.black);
 		g.fillRect(orbitWidth, 0, width-orbitWidth, height);
 		g.setColor(Color.white);
-		g.drawString("Global Filters", (int)(orbitWidth+(width-orbitWidth)*0.29), height/2);
+		g.drawString("Global Filters", (int)(orbitWidth+(width-orbitWidth)*0.13), height/2);
+		
+		/*
+		for(int i = 0; i < 8; i++) {
+			for(int k = 0; k < 5; k++) {
+				Shape p = new Ellipse2D.Float(60+orbitWidth/6*i, orbitHeight/2+orbitHeight*k, 5, 5);
+				int px = 60+orbitWidth/6*i;
+				int py = orbitHeight/2+orbitHeight*k;
+				//System.out.println(px + " " + py);
+				((Graphics2D)g).draw(p);
+			}
+		}*/
 		
 	}
 	

@@ -22,6 +22,7 @@ public class GraphPoint extends JComponent{
 	private int xPlot;
 	private int yPlot;
 	private int diameter;
+	public int index;
 	
 	public boolean isSelected;
 	public boolean isCurrPoint;
@@ -47,6 +48,28 @@ public class GraphPoint extends JComponent{
 		isInFilter = false;
 		isPreData = false;
 		fromAgent = false;
+		
+	}
+	
+	public GraphPoint(Configuration config, double x_dim, double y_dim, int xMin, int xMax, int yMin, int yMax, int index) {
+		diameter = 6;
+		this.config = config;
+		this.x_dim = x_dim;
+		this.y_dim = y_dim;
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
+		this.xPlot = (int)x_dim+xMin-diameter/2;
+		this.yPlot = yMax-(int)y_dim-diameter/2;
+		isCurrPoint = true;
+		isSelected = false;
+		isPrevPoint = false;
+		isInFilter = false;
+		isPreData = false;
+		fromAgent = false;
+		this.index = index;
+		
 	}
 	
 	public GraphPoint(Configuration config, double x_dim, double y_dim, int xMin, int xMax, int yMin, int yMax, boolean isPreData) {
@@ -69,23 +92,28 @@ public class GraphPoint extends JComponent{
 	}
 	
 	public void paint(Graphics g) {
-		g.setColor(Color.magenta);
+		g.setColor(Color.getHSBColor(0.75f,(float)(index)/GraphComponent.numUserPts, 1.0f));
 		
 		if(isPreData) 
-			g.setColor(Color.gray);
+			g.setColor(Color.lightGray);
 				
+		
+		
+		if(fromAgent)
+			g.setColor(Color.lightGray);
+		
 		if(isInFilter) 
 			g.setColor(Color.blue.brighter());
 		
-		if(fromAgent)
-			g.setColor(Color.green.darker());
-		
 		if(isCurrPoint) 
-			g.setColor(Color.red);
+			g.setColor(Color.getHSBColor(0.0f, 1.0f, 1.0f));
 		
 		if(isPrevPoint) {
-			g.setColor(Color.pink);
+			g.setColor(Color.getHSBColor(0.0f, 0.5f, 1.0f));
+			
 		}
+		
+			
 		
 		//Draw the graph point
 		int size = diameter;

@@ -19,14 +19,15 @@ import rbsa.eoss.local.Params;
 
 public class DesignAssistant {
 	
-	private final int xMin = 85;
-	private final int xMax = 1285+100; //4000x (0,0.281) 100px margin of error (these bounds are estimated on the pre-data)
-	private final int yMin = 25;
-	private final int yMax = 825+50; //(1/12)x (0,9981), with a 50px margin of error (some of the points were above the plot)
+	private int xMin = 85;
+	private int xMax = 1285+100; //4000x (0,0.281) 100px margin of error (these bounds are estimated on the pre-data)
+	private int yMin = 25;
+	private int yMax = 825+50; //(1/12)x (0,9981), with a 50px margin of error (some of the points were above the plot)
 	private final double xScale = 4000;
 	private final double yScale = 1/12.0;
-	private final int table_width = 1400;
-	private final int table_height = 800;
+	private int table_width = 1400;//default value for width and height, reset in constructor of design assistant
+	private int table_height = 800;
+	private final int table_width_offset = 410;
 	private final int graph_width = yMax+75;
 	private final int graph_height = xMax+75;
 	private final int numOrbits = 5;
@@ -49,31 +50,44 @@ public class DesignAssistant {
 	private Configuration currentReferenceConfig;
 	
 	public DesignAssistant() {
+		
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+		table_width = (int)gs[0].getDefaultConfiguration().getBounds().getWidth()-table_width_offset;
+		table_height = (int)gs[0].getDefaultConfiguration().getBounds().getHeight();
+		
 		//initialize static variables
 		Configuration.orbit_space_width = (int)(table_width*0.7);
 		Configuration.orbit_space_height = table_height;
 		Configuration.numOrbits = numOrbits;
 		Configuration.numInstruments = 12;
-		Configuration.clusterWidthThreshold = 0.15; 
+		Configuration.clusterWidthThreshold = 500; 
+		
+		
 		
 		blockList = new Hashtable<Long, TuioBlock>();
 		currentConfig = new Configuration();
 		prevConfig = new Configuration();
 		currentReferenceConfig = new Configuration();
-		tableDisplayComponent = new TableComponent(blockList);
-		tableDisplayComponent.setSize(table_width,table_height);
-		graphDisplayComponent = new GraphComponent(blockList, xMin, xMax, yMin, yMax, xScale, yScale);
+		
+		initRBSAEOSS();
+		setupTableWindow(gs[0]);
+		if(gs.length > 1)
+			setupGraphWindow(gs[1]);
+		else
+			setupGraphWindow(gs[0]);
+		
+
+		
 		getInitialData(preDataFile);
 		
 		//Set up initial filter
 		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
 		blockListener = new TuioBlockListener(blockList, currentConfig, prevConfig);
 		
-		device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		
-		initRBSAEOSS();
-		setupTableWindow();
-		setupGraphWindow();
+		
+
 		showTableWindow();
 		showGraphWindow();
 	}
@@ -82,23 +96,29 @@ public class DesignAssistant {
 		return blockListener;
 	}
 	
-	public void setupTableWindow() {
-		tableFrame = new JFrame();
+	public void setupTableWindow(GraphicsDevice gd) {
+		tableFrame = new JFrame(gd.getDefaultConfiguration());
+		tableFrame.setUndecorated(true);
+		Rectangle gcBounds = gd.getDefaultConfiguration().getBounds();
 		
-	
-	
+		
 		tableFrame.setTitle("Block Space");
 		tableFrame.setResizable(false);
 		Insets insets = tableFrame.getInsets();		
-		tableFrame.setSize(table_width,table_height+insets.top);
+		tableFrame.setSize(gcBounds.width, gcBounds.height);
+	
 		tableFrame.setCursor(Cursor.getDefaultCursor());
-		
+		gd.setFullScreenWindow(tableFrame);
+		tableFrame.setLocation(gcBounds.x+table_width_offset, gcBounds.y);
 		tableFrame.addWindowListener(
 				new WindowAdapter() { 
 					public void windowClosing(WindowEvent evt) {
 						System.exit(0);
 					} 
 				});
+		tableDisplayComponent = new TableComponent(blockList);
+		
+		tableDisplayComponent.setSize(table_width,table_height);
 		tableFrame.add(tableDisplayComponent);
 			
 	}
@@ -108,14 +128,26 @@ public class DesignAssistant {
 		tableFrame.repaint();
 	}
 	
-	public void setupGraphWindow() {
+	public void setupGraphWindow(GraphicsDevice gd) {
 		//TODO
-		graphFrame = new JFrame();
+		graphFrame = new JFrame(gd.getDefaultConfiguration());
+		Rectangle gcBounds = gd.getDefaultConfiguration().getBounds();
+		//xMax = gcBounds.x;
+		//yMax = gcBounds.y;
 		graphFrame.setTitle("Cost vs Science Benefit Plot");
 		//graphFrame.setBounds(5, 5, graph_width+75, graph_height);
-		graphFrame.setBounds(5, 5, 1400, yMax+100);
-		graphFrame.setResizable(false);
+		graphFrame.setLocation(50+gcBounds.x, 5+gcBounds.y);
+		graphFrame.setSize(1400, yMax+100);
+		graphFrame.setResizable(true);
 		graphFrame.getContentPane().setBackground(Color.WHITE);
+		
+		graphFrame.addWindowListener(
+				new WindowAdapter() { 
+					public void windowClosing(WindowEvent evt) {
+						System.exit(0);
+					} 
+				});
+		graphDisplayComponent = new GraphComponent(blockList, xMin, xMax, yMin, yMax, xScale, yScale);
 		graphFrame.add(graphDisplayComponent);
 		graphDisplayComponent.addMouseListener(new PointMouseAdapter(graphDisplayComponent, tableDisplayComponent));
 	}
@@ -160,11 +192,14 @@ public class DesignAssistant {
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
 				if(graphDisplayComponent.getMode()=="Exploration") {
+					
 					new Thread(new Runnable() {
 						public void run() {
 							double[] point = thisAssistant.evaluateArchitecture(currentConfig);
-							System.out.println("Science: " + point[0] + " Cost: " + point[1]);
-							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
+							//System.out.println("Science: " + point[0] + " Cost: " + point[1]);
+							System.out.println("I GOT HERE!!!!!!!!!");
+							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
+							GraphComponent.numUserPts++;
 							graphDisplayComponent.addGraphPoint(nextPoint);
 						}
 					}).start();
@@ -181,7 +216,7 @@ public class DesignAssistant {
 				//this can be removed if desired
 				if(!currentReferenceConfig.equals(new Configuration())) {
 					CollaborativeAgent.agentLock = true;
-					new Thread(new Runnable() {
+				/*	new Thread(new Runnable() {
 						public void run() {
 							String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
 							for(int i = 0; i < agentConfigs.length; i++) {
@@ -193,7 +228,7 @@ public class DesignAssistant {
 							}
 							CollaborativeAgent.agentLock = false;
 						}
-					}).start();
+					}).start();*/
 				}
 			}
 			
@@ -257,7 +292,7 @@ public class DesignAssistant {
 	                double[] dataPair = {Double.parseDouble(rawInstance[1])*4000,Double.parseDouble(rawInstance[2])/12};
 	                Configuration config = new Configuration(rawInstance[0]);
 	                GraphPoint point = new GraphPoint(config, dataPair[0], dataPair[1], xMin, xMax, yMin, yMax, true);
-	                graphDisplayComponent.addGraphPoint(point);
+	                graphDisplayComponent.addGeneratedGraphPoint(point);
 	            }
 
 	        } catch (FileNotFoundException e) {

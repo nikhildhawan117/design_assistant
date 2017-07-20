@@ -22,6 +22,7 @@ public class GraphComponent extends JComponent{
 	private int xTickWidth;
 	private int yTickWidth;
 	private String mode;
+	public static int numUserPts = 0;
 	public Configuration currentConfig;
 	public Configuration prevConfig;
 	private LinkedList<GraphPoint> allGraphPoints;
