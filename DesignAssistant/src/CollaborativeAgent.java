@@ -9,6 +9,7 @@ public class CollaborativeAgent {
 		StringBuilder config_sb = new StringBuilder(str);
 		String.format(str);
 		
+		
 		String[] localConfigs = new String[10];
 		for(int i = 0; i < 10; i++) {
 			int bit_index = (int)(Math.random()*60);

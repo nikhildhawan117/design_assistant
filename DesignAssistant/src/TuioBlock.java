@@ -34,7 +34,7 @@ public class TuioBlock extends TuioObject{
 		//outline = new Rectangle2D.Float(-block_size/2,-block_size/2,block_size,block_size);
 		AffineTransform transform = new AffineTransform();
 		transform.translate(xpos,ypos);
-		System.out.println("HEREEREREERERE");
+		
 		transform.rotate(angle,xpos,ypos);
 		outline = transform.createTransformedShape(outline);
 		x_pos = outline.getBounds2D().getX();

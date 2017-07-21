@@ -48,6 +48,7 @@ public class DesignAssistant {
 	private Configuration prevConfig;
 	//the current Configuration used by the agent to calculate local points
 	private Configuration currentReferenceConfig;
+	private GraphPoint currentGP;
 	
 	public DesignAssistant() {
 		
@@ -79,7 +80,7 @@ public class DesignAssistant {
 		
 
 		
-		getInitialData(preDataFile);
+		//getInitialData(preDataFile);
 		
 		//Set up initial filter
 		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
@@ -196,11 +197,11 @@ public class DesignAssistant {
 					new Thread(new Runnable() {
 						public void run() {
 							double[] point = thisAssistant.evaluateArchitecture(currentConfig);
-							//System.out.println("Science: " + point[0] + " Cost: " + point[1]);
-							System.out.println("I GOT HERE!!!!!!!!!");
+							System.out.println("Science: " + point[0] + " Cost: " + point[1]);
 							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
 							GraphComponent.numUserPts++;
 							graphDisplayComponent.addGraphPoint(nextPoint);
+							currentGP = nextPoint;
 						}
 					}).start();
 				}	
@@ -235,6 +236,7 @@ public class DesignAssistant {
 			
 			tableDisplayComponent.setConfigs(currentConfig, prevConfig);
 			graphDisplayComponent.setConfigs(currentConfig, prevConfig);
+			graphDisplayComponent.currentGP = currentGP;
 			tableDisplayComponent.repaint();
 			graphDisplayComponent.repaint();
 			
@@ -264,7 +266,8 @@ public class DesignAssistant {
 		ArrayList<String> inputArch = new ArrayList<String>(Arrays.asList(config.getConfig()));
        
 		try{
-		
+			
+			
         	Architecture architecture = AG.defineNewArch(inputArch);
             // Evaluate the architecture
             Result result = AE.evaluateArchitecture(architecture,"Slow");
@@ -272,6 +275,11 @@ public class DesignAssistant {
             // Save the score and the cost
             double cost = result.getCost();
             double science = result.getScience();
+            
+            for(int i = 0; i < inputArch.size(); i++) {
+				System.out.println(inputArch.get(i));
+			}
+			System.out.println("DONE");
 
     		return new double[] {science, cost};
         }

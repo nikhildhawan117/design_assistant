@@ -130,7 +130,7 @@ public class GraphPoint extends JComponent{
 	}
 	
 	public int[] getBoundaries() {
-		int[] bounds = {xPlot,yPlot,diameter};  
+		int[] bounds = {xPlot,yPlot,diameter+4};  
 		return bounds;
 	}
 	
