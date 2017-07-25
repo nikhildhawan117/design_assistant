@@ -22,12 +22,14 @@ public class GraphComponent extends JComponent{
 	private int xTickWidth;
 	private int yTickWidth;
 	private String mode;
+	public static int numUserPts = 0;
 	public Configuration currentConfig;
 	public Configuration prevConfig;
 	private LinkedList<GraphPoint> allGraphPoints;
 	public HashMap<String,GraphPoint> pixelMap = new HashMap<String,GraphPoint>();
 	//invariant currentSelectedPoint must always point to the same object as in TableComponent
 	public GraphPoint currentSelectedPoint = null;
+	public GraphPoint currentGP = null;
 	//sets currentConfig and prevConfig to orbits defined by blockList
 	public GraphComponent(Hashtable<Long,TuioBlock> blockList, int xMin, int xMax, int yMin, int yMax, double xScale, double yScale) {
 		this.blockList = blockList;
@@ -98,6 +100,15 @@ public class GraphComponent extends JComponent{
         		pixelMap.put(String.format("%d%d",i,j), gp);
         	}
         }
+        if(currentGP != null) {
+        	bounds = currentGP.getBoundaries();
+        	//not elegant, but ensures that the current GP is not overridden in the pixelmap
+        	for(int i=bounds[0]; i<=(bounds[0]+bounds[2]); i++){
+        		for(int j=bounds[1]; j<=(bounds[1]+bounds[2]); j++){
+        			pixelMap.put(String.format("%d%d",i,j), currentGP);
+        		}
+        	}
+       }
 	}
 	
 	public void init(Graphics g) {
@@ -133,9 +144,12 @@ public class GraphComponent extends JComponent{
 		init(g);
 		
 		//these should only be GraphPoints
-		Component[] allComponents = getComponents();
-		for(int i = 0; i < allComponents.length; i++)
-			allComponents[i].paint(g);
+		for(int i = allGraphPoints.size()-1; i >= 0; i--)
+			allGraphPoints.get(i).paint(g);
+		
+		//Component[] allComponents = getComponents();
+		//for(int i = 0; i < allComponents.length; i++)
+		//	allComponents[i].paint(g);
 
 	}
 	
