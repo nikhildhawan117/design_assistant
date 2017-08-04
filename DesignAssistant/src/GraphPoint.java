@@ -10,7 +10,10 @@ public class GraphPoint extends JComponent{
 	
 	//Configuration associated with this graph point
 	private Configuration config;
-	
+	public static boolean t1 = true;
+	public static boolean t2;
+	public static boolean t3;
+	public static boolean t4;
 	//the x and y dimensions associated with the graph point's configuration
 	double x_dim;
 	double y_dim;
@@ -97,12 +100,10 @@ public class GraphPoint extends JComponent{
 		if(isPreData) 
 			g.setColor(Color.lightGray);
 				
-		
-		
 		if(fromAgent)
 			g.setColor(Color.lightGray);
 		
-		if(isInFilter) 
+		if(isInFilter && !t1) 
 			g.setColor(Color.blue.brighter());
 		
 		if(isCurrPoint) 

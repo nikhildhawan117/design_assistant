@@ -7,6 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import javax.swing.*;
 import TUIO.*;
 
@@ -33,6 +37,10 @@ public class DesignAssistant {
 	private final int numOrbits = 5;
 
 	private final String preDataFile = "./EOSS_data.csv";
+	public static final String CLICK_EVENT = "CLICK_EVENT";
+	public static final String EXPLORE_EVENT = "EXPLORE_EVENT";
+	public static final String FILTER_EVENT = "FILTER_EVENT";
+	public static final String AGENT_EVENT = "AGENT_EVENT";
 
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
@@ -49,6 +57,14 @@ public class DesignAssistant {
 	//the current Configuration used by the agent to calculate local points
 	private Configuration currentReferenceConfig;
 	private GraphPoint currentGP;
+	private char[] currentCipher;
+	public Logger logger;
+	private FileHandler fileHandler;
+	
+	public boolean t1 = true;
+	public boolean t2;
+	public boolean t3;
+	public boolean t4;
 	
 	public DesignAssistant() {
 		
@@ -56,7 +72,19 @@ public class DesignAssistant {
 		GraphicsDevice[] gs = ge.getScreenDevices();
 		table_width = (int)gs[0].getDefaultConfiguration().getBounds().getWidth()-table_width_offset;
 		table_height = (int)gs[0].getDefaultConfiguration().getBounds().getHeight();
-		
+		logger = Logger.getLogger("Design Assistant User Study File Log");
+		//remove console handler
+		logger.setUseParentHandlers(false);
+		try {
+			fileHandler = new FileHandler("./user_filelog.log");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.addHandler(fileHandler);
+		SimpleFormatter formatter = new SimpleFormatter();
+		fileHandler.setFormatter(formatter);
 		//initialize static variables
 		Configuration.orbit_space_width = (int)(table_width*0.7);
 		Configuration.orbit_space_height = table_height;
@@ -70,7 +98,7 @@ public class DesignAssistant {
 		currentConfig = new Configuration();
 		prevConfig = new Configuration();
 		currentReferenceConfig = new Configuration();
-		
+		makeCipher(0);
 		initRBSAEOSS();
 		setupTableWindow(gs[0]);
 		if(gs.length > 1)
@@ -80,7 +108,7 @@ public class DesignAssistant {
 		
 
 		
-		//getInitialData(preDataFile);
+		getInitialData(preDataFile);
 		
 		//Set up initial filter
 		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
@@ -92,6 +120,14 @@ public class DesignAssistant {
 		showTableWindow();
 		showGraphWindow();
 	}
+	
+	public void makeCipher(int shift) {
+		currentCipher = new char[12];
+		for (int i = 0; i < 12; i++) {
+			currentCipher[i] = (char)('A' + (i + shift)%12);
+		}
+	}
+
 	
 	public TuioListener getTuioListener() {
 		return blockListener;
@@ -138,9 +174,70 @@ public class DesignAssistant {
 		graphFrame.setTitle("Cost vs Science Benefit Plot");
 		//graphFrame.setBounds(5, 5, graph_width+75, graph_height);
 		graphFrame.setLocation(50+gcBounds.x, 5+gcBounds.y);
-		graphFrame.setSize(1400, yMax+100);
+		graphFrame.setSize(1600, yMax+100);
 		graphFrame.setResizable(true);
 		graphFrame.getContentPane().setBackground(Color.WHITE);
+		
+		JButton btn1 = new JButton("Treatment 1");
+		JButton btn2 = new JButton("Treatment 2");
+		JButton btn3 = new JButton("Treatment 3");
+		JButton btn4 = new JButton("Treatment 4");
+		
+		btn1.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				makeCipher(0);
+				t1 = true;
+				GraphPoint.t1 = true;
+				t2 = false;
+				t3 = false;
+				t4 = false;
+				//System.out.println("1");
+			}
+		});
+		
+		btn2.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				makeCipher(3);
+				t1 = false;
+				//GraphPoint.t1 = false;
+				t2 = true;
+				t3 = false;
+				t4 = false;
+				//System.out.println("2");
+			}
+		});
+		btn3.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				makeCipher(6);
+				t1 = false;
+				//GraphPoint.t1 = false;
+				t2 = false;
+				t3 = true;
+				t4 = false;
+				//System.out.println("3");
+			}
+		});
+		btn4.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				makeCipher(9);
+				t1 = false;
+				//GraphPoint.t1 = false;
+				t2 = false;
+				t3 = false;
+				t4 = true;
+				//System.out.println("4");
+			}
+		});
+		
+		graphFrame.add(btn1);
+		graphFrame.add(btn2);
+		graphFrame.add(btn3);
+		graphFrame.add(btn4);
+		
+		btn1.setBounds(xMax, yMin, 150, 30);
+		btn2.setBounds(xMax, yMin+50, 150, 30);
+		btn3.setBounds(xMax, yMin+100, 150, 30);
+		btn4.setBounds(xMax, yMin+150, 150, 30);
 		
 		graphFrame.addWindowListener(
 				new WindowAdapter() { 
@@ -179,6 +276,10 @@ public class DesignAssistant {
 				}
 			}
 			
+
+			
+			
+			
 			currentConfig = blockListener.getCurrentConfig();
 			prevConfig = blockListener.getPrevConfig();
 			
@@ -190,6 +291,12 @@ public class DesignAssistant {
 			//ensures that calculation and filtering is only done when a new
 			//configuration is created
 			if(!currentConfig.equals(prevConfig) ) {
+				
+				//LOGGING CODE
+				
+
+				//END LOGGING CODE
+				
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
 				if(graphDisplayComponent.getMode()=="Exploration") {
@@ -202,9 +309,18 @@ public class DesignAssistant {
 							GraphComponent.numUserPts++;
 							graphDisplayComponent.addGraphPoint(nextPoint);
 							currentGP = nextPoint;
+							
+							String configString = nextPoint.getConfig().getBinaryString();
+							double science = nextPoint.x_dim/4000;
+							double cost = nextPoint.y_dim*12;
+							logger.info(EXPLORE_EVENT + " " + configString + " " + science + " " + cost);
 						}
 					}).start();
-				}	
+				}
+				
+				else {
+					logger.info(FILTER_EVENT + " " + currentConfig.getBinaryString() + " " + -1 + " " + -1);
+				}
 			}
 			
 			//ensures local configs are only calculated on most recently explored point
@@ -215,9 +331,9 @@ public class DesignAssistant {
 				currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
-				if(!currentReferenceConfig.equals(new Configuration())) {
+				if((t3 || t4) && !currentReferenceConfig.equals(new Configuration())) {
 					CollaborativeAgent.agentLock = true;
-				/*	new Thread(new Runnable() {
+					new Thread(new Runnable() {
 						public void run() {
 							String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
 							for(int i = 0; i < agentConfigs.length; i++) {
@@ -226,10 +342,14 @@ public class DesignAssistant {
 								GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
 								agentPoint.fromAgent = true;
 								graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
+								String configString = agentPoint.getConfig().getBinaryString();
+								double science = agentPoint.x_dim/4000;
+								double cost = agentPoint.y_dim*12;
+								logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
 							}
 							CollaborativeAgent.agentLock = false;
 						}
-					}).start();*/
+					}).start();
 				}
 			}
 			
@@ -265,6 +385,15 @@ public class DesignAssistant {
 		
 		ArrayList<String> inputArch = new ArrayList<String>(Arrays.asList(config.getConfig()));
        
+		for(int i = 0; i < inputArch.size(); i++) {
+			String replacementString = "";
+			for (int j = 0; j < inputArch.get(i).length(); j++) {
+				char replacementChar = currentCipher[inputArch.get(i).charAt(j)-'A'];
+				replacementString += replacementChar;
+			}
+			inputArch.set(i, replacementString);
+		}
+		
 		try{
 			
 			

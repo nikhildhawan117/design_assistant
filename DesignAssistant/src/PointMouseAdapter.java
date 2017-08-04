@@ -1,6 +1,7 @@
 import java.awt.Component;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -10,11 +11,15 @@ import rbsa.eoss.Orbit;
 public class PointMouseAdapter extends MouseAdapter {
 	GraphComponent graphDisplayComponent;
 	TableComponent tableDisplayComponent;
-	
+	Logger logger;
 	public PointMouseAdapter(GraphComponent graphDisplayComponent, TableComponent tableDisplayComponent){
 		this.graphDisplayComponent = graphDisplayComponent;
 		this.tableDisplayComponent = tableDisplayComponent;
+		
+		logger = Logger.getLogger("Design Assistant User Study File Log");
 	}
+	
+
 	
 	public void mouseClicked(MouseEvent e) {
 	
@@ -28,7 +33,10 @@ public class PointMouseAdapter extends MouseAdapter {
 			GraphPoint gp = graphDisplayComponent.pixelMap.get(key);
 			
 			if(gp != null){
-					
+				String configString = gp.getConfig().getBinaryString();
+				double science = gp.x_dim/4000;
+				double cost = gp.y_dim*12;
+				logger.info(configString + " " + science + " " + cost);
 				if(graphDisplayComponent.currentSelectedPoint != null)
 					graphDisplayComponent.currentSelectedPoint.isSelected = false;
 				
@@ -38,6 +46,7 @@ public class PointMouseAdapter extends MouseAdapter {
 			}
 			
 			else {
+				logger.info(DesignAssistant.CLICK_EVENT + " " + Configuration.EMPTY + " " + 0 + " " + 0);
 				if(graphDisplayComponent.currentSelectedPoint != null)
 					graphDisplayComponent.currentSelectedPoint.isSelected = false;
 				graphDisplayComponent.currentSelectedPoint = null;

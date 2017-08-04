@@ -16,6 +16,7 @@ public class Configuration {
 	public static int orbit_space_width;
 	public static int orbit_space_height;
 	public static int numInstruments;
+	public final static String EMPTY = "000000000000000000000000000000000000000000000000000000000000";
 	public static double clusterWidthThreshold;
 
 	public Configuration() {
@@ -84,7 +85,7 @@ public class Configuration {
 						if(c.addtoCluster(tblock)){
 							clustered = true;
 							matched.push(c);
-							//System.out.println("OH ITS GOOD ASAP");
+							//System.out.println("Here");
 						}
 					}
 					//if not clustered in any current, create a new cluster
@@ -228,6 +229,12 @@ public class Configuration {
 		}
 		
 		return filterMatch;
+	}
+	
+	public String getBinaryString() {
+		Long configLong = this.getBinaryOneHot();
+		String configString = String.format("%60s", Long.toBinaryString(configLong)).replace(" ", "0");
+		return configString;
 	}
 	
 
