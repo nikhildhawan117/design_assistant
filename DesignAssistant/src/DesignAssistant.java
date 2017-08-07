@@ -3,6 +3,7 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -66,7 +67,12 @@ public class DesignAssistant {
 	public boolean t3;
 	public boolean t4;
 	
+	private int counter;
+	private final int counter_threshold = 3;
+	
 	public DesignAssistant() {
+		
+		
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
@@ -108,8 +114,9 @@ public class DesignAssistant {
 		
 
 		
-		getInitialData(preDataFile);
-		
+		//getInitialData(preDataFile);
+		//System.out.println("Generating Random Data...");
+		//generateRandomData();
 		//Set up initial filter
 		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
 		blockListener = new TuioBlockListener(blockList, currentConfig, prevConfig);
@@ -119,6 +126,7 @@ public class DesignAssistant {
 
 		showTableWindow();
 		showGraphWindow();
+		
 	}
 	
 	public void makeCipher(int shift) {
@@ -290,12 +298,10 @@ public class DesignAssistant {
 			
 			//ensures that calculation and filtering is only done when a new
 			//configuration is created
-			if(!currentConfig.equals(prevConfig) ) {
+			if (!currentConfig.equals(prevConfig)) {
 				
-				//LOGGING CODE
-				
-
-				//END LOGGING CODE
+				tableDisplayComponent.setConfigs(currentConfig, prevConfig);
+				graphDisplayComponent.setConfigs(currentConfig, prevConfig);
 				
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
@@ -304,7 +310,7 @@ public class DesignAssistant {
 					new Thread(new Runnable() {
 						public void run() {
 							double[] point = thisAssistant.evaluateArchitecture(currentConfig);
-							System.out.println("Science: " + point[0] + " Cost: " + point[1]);
+							//System.out.println("Science: " + point[0] + " Cost: " + point[1]);
 							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
 							GraphComponent.numUserPts++;
 							graphDisplayComponent.addGraphPoint(nextPoint);
@@ -354,8 +360,7 @@ public class DesignAssistant {
 			}
 			
 			
-			tableDisplayComponent.setConfigs(currentConfig, prevConfig);
-			graphDisplayComponent.setConfigs(currentConfig, prevConfig);
+			
 			graphDisplayComponent.currentGP = currentGP;
 			tableDisplayComponent.repaint();
 			graphDisplayComponent.repaint();
@@ -381,6 +386,9 @@ public class DesignAssistant {
         AE.init(1);
 	}
 	
+	/*
+	 * returns [science, cost] given a Configuration
+	 */
 	public double[] evaluateArchitecture(Configuration config) {
 		
 		ArrayList<String> inputArch = new ArrayList<String>(Arrays.asList(config.getConfig()));
@@ -406,9 +414,9 @@ public class DesignAssistant {
             double science = result.getScience();
             
             for(int i = 0; i < inputArch.size(); i++) {
-				System.out.println(inputArch.get(i));
+				//System.out.println(inputArch.get(i));
 			}
-			System.out.println("DONE");
+			//System.out.println("DONE");
 
     		return new double[] {science, cost};
         }
@@ -416,6 +424,20 @@ public class DesignAssistant {
         	return new double[] {0, 0};
         }
 
+	}
+	
+	private void generateRandomData() {
+		makeCipher(3);
+		Configuration startConfig = new Configuration();
+		for(int i = 0; i < 100; i++) {
+			String[] randomOneHots = CollaborativeAgent.getLocalConfig(startConfig.getBinaryOneHot());
+			for(int j = 0; j < randomOneHots.length; j++) {
+				double[] info = evaluateArchitecture(new Configuration(randomOneHots[j]));
+				System.out.println(randomOneHots[j] + "," + info[0] + "," + info[1]);
+			}
+			startConfig =  new Configuration(randomOneHots[randomOneHots.length-1]);
+		}
+		makeCipher(0);
 	}
 	
 	private void getInitialData(String filename){
