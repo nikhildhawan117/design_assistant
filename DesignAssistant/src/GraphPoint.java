@@ -103,7 +103,7 @@ public class GraphPoint extends JComponent{
 		if(fromAgent)
 			g.setColor(Color.lightGray);
 		
-		if(isInFilter && !t1) 
+		if(isInFilter && false) 
 			g.setColor(Color.blue.brighter());
 		
 		if(isCurrPoint) 

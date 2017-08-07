@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -55,6 +56,7 @@ public class DesignAssistant {
 	private GraphicsDevice device;
 	private Configuration currentConfig;
 	private Configuration prevConfig;
+	private Configuration prevCalcConfig;
 	//the current Configuration used by the agent to calculate local points
 	private Configuration currentReferenceConfig;
 	private GraphPoint currentGP;
@@ -69,6 +71,8 @@ public class DesignAssistant {
 	
 	private int counter;
 	private final int counter_threshold = 3;
+	
+	private Thread curT;
 	
 	public DesignAssistant() {
 		
@@ -103,6 +107,7 @@ public class DesignAssistant {
 		blockList = new Hashtable<Long, TuioBlock>();
 		currentConfig = new Configuration();
 		prevConfig = new Configuration();
+		prevCalcConfig = new Configuration();
 		currentReferenceConfig = new Configuration();
 		makeCipher(0);
 		initRBSAEOSS();
@@ -205,7 +210,7 @@ public class DesignAssistant {
 		
 		btn2.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
-				makeCipher(3);
+				makeCipher(0);
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = true;
@@ -299,29 +304,54 @@ public class DesignAssistant {
 			//ensures that calculation and filtering is only done when a new
 			//configuration is created
 			if (!currentConfig.equals(prevConfig)) {
-				
+				//System.out.println("Outer");
+				//System.out.println(currentConfig);
+				//System.out.println(prevCalcConfig);
 				tableDisplayComponent.setConfigs(currentConfig, prevConfig);
 				graphDisplayComponent.setConfigs(currentConfig, prevConfig);
 				
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
 				if(graphDisplayComponent.getMode()=="Exploration") {
+					//System.out.println("Inner");
 					
-					new Thread(new Runnable() {
+					//					if(curT != null){
+//						try {
+//							curT.sleep(Long.MAX_VALUE);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//						curT.interrupt();
+//					}
+//		
+					curT = new Thread(new Runnable() {
 						public void run() {
-							double[] point = thisAssistant.evaluateArchitecture(currentConfig);
-							//System.out.println("Science: " + point[0] + " Cost: " + point[1]);
-							GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
-							GraphComponent.numUserPts++;
-							graphDisplayComponent.addGraphPoint(nextPoint);
-							currentGP = nextPoint;
+							try {
+								//deep copy to be thread safe
+								Configuration c = new Configuration(currentConfig.getBinaryString());
+								double[] point = thisAssistant.evaluateArchitecture(c);
+								
+								//System.out.println("Science: " + point[0] + " Cost: " + point[1]);
+								if(!currentConfig.equals(prevCalcConfig)) {
+								thisAssistant.prevCalcConfig = c;
+								GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
+								GraphComponent.numUserPts++;
+								graphDisplayComponent.addGraphPoint(nextPoint);
+								currentGP = nextPoint;
 							
-							String configString = nextPoint.getConfig().getBinaryString();
-							double science = nextPoint.x_dim/4000;
-							double cost = nextPoint.y_dim*12;
-							logger.info(EXPLORE_EVENT + " " + configString + " " + science + " " + cost);
+								String configString = nextPoint.getConfig().getBinaryString();
+								double science = nextPoint.x_dim/4000;
+								double cost = nextPoint.y_dim*12;
+								logger.info(EXPLORE_EVENT + " " + configString + " " + science + " " + cost);
+								}
+							} catch(NullPointerException ce) {
+								return;
+							}
 						}
-					}).start();
+					});
+					curT.start();
+							
 				}
 				
 				else {
@@ -355,7 +385,7 @@ public class DesignAssistant {
 							}
 							CollaborativeAgent.agentLock = false;
 						}
-					}).start();
+					}, "point_calculation").start();
 				}
 			}
 			
@@ -383,7 +413,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(1);
+        AE.init(4);
 	}
 	
 	/*

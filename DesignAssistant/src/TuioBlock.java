@@ -101,15 +101,17 @@ public class TuioBlock extends TuioObject{
 		double x_trans = ax_x*s.getBounds2D().getX() + ax_y*s.getBounds2D().getY() + cx;
 		double y_trans = ay_x*s.getBounds2D().getX() + ay_y*s.getBounds2D().getY() + cy;
 		trans = new AffineTransform();
-		trans.translate(x_trans-s.getBounds2D().getX(), y_trans-s.getBounds2D().getY());
+		trans.translate(x_trans-s.getBounds2D().getX()-s.getBounds2D().getWidth()/2, 
+				y_trans-s.getBounds2D().getY()-s.getBounds2D().getHeight()/2);
 		s = trans.createTransformedShape(s);
 		//s.getBounds().x = (int)x_trans;
 		//s.getBounds().x = (int)y_trans;
 		g.setPaint(Color.white);
 		setCoords(x_trans, y_trans);
-		//g.draw(s);
+		g.draw(s);
 		
 		g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
+		
 	}
 	
 

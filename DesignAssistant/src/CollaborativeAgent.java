@@ -12,14 +12,16 @@ public class CollaborativeAgent {
 		
 		String[] localConfigs = new String[10];
 		for(int i = 0; i < 10; i++) {
+			StringBuilder config_sb_prime = new StringBuilder(config_sb);
+			
 			int bit_index = (int)(Math.random()*60);
 			//System.out.println(bit_index);
 			if(config_sb.charAt(bit_index)=='0')
-				config_sb.setCharAt(bit_index, '1');
+				config_sb_prime.setCharAt(bit_index, '1');
 			else
-				config_sb.setCharAt(bit_index, '0');
+				config_sb_prime.setCharAt(bit_index, '0');
 			
-			localConfigs[i] = config_sb.toString();
+			localConfigs[i] = config_sb_prime.toString();
 			//System.out.println("Random Config: " + localConfigs[i]);
 		}
 		
