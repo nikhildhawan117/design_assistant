@@ -43,6 +43,7 @@ public class DesignAssistant {
 	public static final String EXPLORE_EVENT = "EXPLORE_EVENT";
 	public static final String FILTER_EVENT = "FILTER_EVENT";
 	public static final String AGENT_EVENT = "AGENT_EVENT";
+	public static final String CLEAR_EVENT = "CLEAR_EVENT";
 
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
@@ -75,8 +76,6 @@ public class DesignAssistant {
 	private Thread curT;
 	
 	public DesignAssistant() {
-		
-		
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
@@ -289,12 +288,16 @@ public class DesignAssistant {
 				}
 			}
 			
-
-			
-			
-			
 			currentConfig = blockListener.getCurrentConfig();
 			prevConfig = blockListener.getPrevConfig();
+			
+			
+			//Will not terminate any intelligent Agent threads, need to fix this
+			if(currentConfig.getPhysicalButtons().contains(new StringBuilder("O"))) {
+				logger.info(CLEAR_EVENT + " " + currentConfig.getBinaryString() + " " + 0 + " " + 0);
+			}
+			
+			
 			
 			//System.out.println("Current Config: " + currentConfig.toString());
 			//System.out.println("Prev Config: " + prevConfig.toString());
@@ -307,8 +310,7 @@ public class DesignAssistant {
 				//System.out.println("Outer");
 				//System.out.println(currentConfig);
 				//System.out.println(prevCalcConfig);
-				tableDisplayComponent.setConfigs(currentConfig, prevConfig);
-				graphDisplayComponent.setConfigs(currentConfig, prevConfig);
+				
 				
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
@@ -390,7 +392,8 @@ public class DesignAssistant {
 			}
 			
 			
-			
+			tableDisplayComponent.setConfigs(currentConfig, prevConfig);
+			graphDisplayComponent.setConfigs(currentConfig, prevConfig);
 			graphDisplayComponent.currentGP = currentGP;
 			tableDisplayComponent.repaint();
 			graphDisplayComponent.repaint();

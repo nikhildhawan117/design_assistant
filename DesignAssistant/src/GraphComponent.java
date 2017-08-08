@@ -112,8 +112,6 @@ public class GraphComponent extends JComponent{
 	}
 	
 	public void init(Graphics g) {
-
-
 		//Draw Graph Components 
 		g.setColor(Color.black);
 		g.drawLine(xMin, yMin, xMin, yMax); //y axis
@@ -133,6 +131,22 @@ public class GraphComponent extends JComponent{
 		
 	}
 	
+	//Removes all non pre-data GraphPoints attached to this component
+	public void removeAllGraphPoints() {
+		Component[] allComponents = this.getComponents();
+		
+		for(Component c : allComponents) {
+			if(c instanceof GraphPoint && !((GraphPoint)c).isPreData)
+			this.remove(c);
+		}
+		
+		for(GraphPoint gp : allGraphPoints) {
+			if(!gp.isPreData) {
+				allGraphPoints.remove(gp);
+			}
+		}
+	}
+	
 	public void paint(Graphics g) {
 		update(g);
 	
@@ -143,7 +157,11 @@ public class GraphComponent extends JComponent{
 	public void update(Graphics g) {
 		init(g);
 		
-		//these should only be GraphPoints
+		//clear physical button support
+		if(currentConfig.getPhysicalButtons().contains(new StringBuilder("O"))) {
+			removeAllGraphPoints();
+		}
+		
 		for(int i = allGraphPoints.size()-1; i >= 0; i--)
 			allGraphPoints.get(i).paint(g);
 		
