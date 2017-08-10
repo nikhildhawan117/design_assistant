@@ -60,10 +60,10 @@ public class GraphComponent extends JComponent{
 	 * to prevPoint and prevPoint to a regular point.
 	 * Assumes gp is constructed such that isCurrpoint is true
 	 * also adds gp as a component to GraphPoints list of components
-	 * also updates the pixelMap
+	 * also updates the pixelMap, also increments numUserPoints
 	 * */
-	public void addGraphPoint(GraphPoint gp) {
-		
+	public synchronized void addGraphPoint(GraphPoint gp) {
+		numUserPts++;
 		add(gp);
 		if(!gp.isPreData) {
 			if(getAllGraphPoints().size() > 0) {
@@ -88,7 +88,7 @@ public class GraphComponent extends JComponent{
 	 * Adds a graph point to the tail of allGraphPoints
 	 * automatically sets isCurrPoint and isPrevPoint to false
 	 */
-	public void addGeneratedGraphPoint(GraphPoint gp) {
+	public synchronized void addGeneratedGraphPoint(GraphPoint gp) {
 		gp.isCurrPoint = false;
 		gp.isPrevPoint = false;
 		add(gp);
@@ -132,7 +132,7 @@ public class GraphComponent extends JComponent{
 	}
 	
 	//Removes all non pre-data GraphPoints attached to this component
-	public void removeAllGraphPoints() {
+	public synchronized void removeAllGraphPoints() {
 		Component[] allComponents = this.getComponents();
 		
 		for(Component c : allComponents) {
@@ -140,9 +140,11 @@ public class GraphComponent extends JComponent{
 			this.remove(c);
 		}
 		
-		for(GraphPoint gp : allGraphPoints) {
+
+		for(Iterator<GraphPoint> iter = allGraphPoints.iterator(); iter.hasNext();) {
+			GraphPoint gp = iter.next();
 			if(!gp.isPreData) {
-				allGraphPoints.remove(gp);
+				iter.remove();
 			}
 		}
 	}

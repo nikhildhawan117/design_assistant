@@ -338,7 +338,6 @@ public class DesignAssistant {
 								if(!currentConfig.equals(prevCalcConfig)) {
 								thisAssistant.prevCalcConfig = c;
 								GraphPoint nextPoint = new GraphPoint(nextPointConfig, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax, graphDisplayComponent.numUserPts);
-								GraphComponent.numUserPts++;
 								graphDisplayComponent.addGraphPoint(nextPoint);
 								currentGP = nextPoint;
 							
@@ -416,7 +415,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(4);
+        AE.init(1);
 	}
 	
 	/*
