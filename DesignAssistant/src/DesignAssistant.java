@@ -293,7 +293,7 @@ public class DesignAssistant {
 			
 			
 			//Will not terminate any intelligent Agent threads, need to fix this
-			if(currentConfig.getPhysicalButtons().contains(new StringBuilder("O"))) {
+			if(currentConfig.getPhysicalButtons().contains(new StringBuilder("O")) && !prevConfig.getPhysicalButtons().contains(new StringBuilder("O"))) {
 				logger.info(CLEAR_EVENT + " " + currentConfig.getBinaryString() + " " + 0 + " " + 0);
 			}
 			
