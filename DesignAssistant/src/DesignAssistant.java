@@ -44,6 +44,11 @@ public class DesignAssistant {
 	public static final String FILTER_EVENT = "FILTER_EVENT";
 	public static final String AGENT_EVENT = "AGENT_EVENT";
 	public static final String CLEAR_EVENT = "CLEAR_EVENT";
+	public static final String TREATMENT_1 = "TREATMENT_1";
+	public static final String TREATMENT_2 = "TREATMENT_2";
+	public static final String TREATMENT_3 = "TREATMENT_3";
+	public static final String TREATMENT_4 = "TREATMENT_4";
+	public static final String TREATMENT_TRIAL = "TREATMENT_TRIAL";
 
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
@@ -69,6 +74,7 @@ public class DesignAssistant {
 	public boolean t2;
 	public boolean t3;
 	public boolean t4;
+	public boolean tt; //trial treatment
 	
 	private int counter;
 	private final int counter_threshold = 3;
@@ -194,6 +200,7 @@ public class DesignAssistant {
 		JButton btn2 = new JButton("Treatment 2");
 		JButton btn3 = new JButton("Treatment 3");
 		JButton btn4 = new JButton("Treatment 4");
+		JButton btn5 = new JButton("Demo Treatment");
 		
 		btn1.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
@@ -241,15 +248,30 @@ public class DesignAssistant {
 			}
 		});
 		
+		btn5.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				makeCipher(3);
+				t1 = false;
+				GraphPoint.t1 = false;
+				t2 = false;
+				t3 = false;
+				t4 = false;
+				tt = true;
+				//System.out.println("5");
+			}
+		});
+		
 		graphFrame.add(btn1);
 		graphFrame.add(btn2);
 		graphFrame.add(btn3);
 		graphFrame.add(btn4);
+		graphFrame.add(btn5);
 		
 		btn1.setBounds(xMax, yMin, 150, 30);
 		btn2.setBounds(xMax, yMin+50, 150, 30);
 		btn3.setBounds(xMax, yMin+100, 150, 30);
 		btn4.setBounds(xMax, yMin+150, 150, 30);
+		btn5.setBounds(xMax, yMin+200, 150, 30);
 		
 		graphFrame.addWindowListener(
 				new WindowAdapter() { 
