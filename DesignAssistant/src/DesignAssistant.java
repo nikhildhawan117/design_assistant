@@ -53,6 +53,9 @@ public class DesignAssistant {
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
 	
+	private ArchitectureGenerator agentAG;
+	private ArchitectureEvaluator agentAE;
+	
 	private Hashtable<Long,TuioBlock> blockList;
 	private TableComponent tableDisplayComponent;
 	private GraphComponent graphDisplayComponent;
@@ -210,6 +213,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = false;
+				logger.info(TREATMENT_1 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
 				//System.out.println("1");
 			}
 		});
@@ -222,6 +226,7 @@ public class DesignAssistant {
 				t2 = true;
 				t3 = false;
 				t4 = false;
+				logger.info(TREATMENT_2 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
 				//System.out.println("2");
 			}
 		});
@@ -233,6 +238,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = true;
 				t4 = false;
+				logger.info(TREATMENT_3 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
 				//System.out.println("3");
 			}
 		});
@@ -244,6 +250,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = true;
+				logger.info(TREATMENT_4 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
 				//System.out.println("4");
 			}
 		});
@@ -387,17 +394,19 @@ public class DesignAssistant {
 			//explored by the agent and such that the agent is not 
 			//currently exploring a point
 			if(!currentConfig.equals(currentReferenceConfig) && !CollaborativeAgent.agentLock) {
+				System.out.println("AGENT1");
 				currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
 				if((t3 || t4) && !currentReferenceConfig.equals(new Configuration())) {
+					System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
 							String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
 							for(int i = 0; i < agentConfigs.length; i++) {
 								Configuration agentConfiguration = new Configuration(agentConfigs[i]);
-								double[] point = thisAssistant.evaluateArchitecture(agentConfiguration);
+								double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
 								GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
 								agentPoint.fromAgent = true;
 								graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
@@ -432,12 +441,16 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-        AE = ArchitectureEvaluator.getInstance();
-        AG = ArchitectureGenerator.getInstance();
+      	AE = ArchitectureEvaluator.getInstance();
+      	AG = ArchitectureGenerator.getInstance();
+        
+        agentAE = ArchitectureEvaluator.getInstance();
+        agentAG = ArchitectureGenerator.getInstance();
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
         AE.init(1);
+        agentAE.init(4);
 	}
 	
 	/*
@@ -462,6 +475,43 @@ public class DesignAssistant {
         	Architecture architecture = AG.defineNewArch(inputArch);
             // Evaluate the architecture
             Result result = AE.evaluateArchitecture(architecture,"Slow");
+            
+            // Save the score and the cost
+            double cost = result.getCost();
+            double science = result.getScience();
+            
+            for(int i = 0; i < inputArch.size(); i++) {
+				//System.out.println(inputArch.get(i));
+			}
+			//System.out.println("DONE");
+
+    		return new double[] {science, cost};
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	return new double[] {0, 0};
+        }
+
+	}
+	
+	public double[] evaluateAgentArchitecture(Configuration config) {
+		
+		ArrayList<String> inputArch = new ArrayList<String>(Arrays.asList(config.getConfig()));
+       
+		for(int i = 0; i < inputArch.size(); i++) {
+			String replacementString = "";
+			for (int j = 0; j < inputArch.get(i).length(); j++) {
+				char replacementChar = currentCipher[inputArch.get(i).charAt(j)-'A'];
+				replacementString += replacementChar;
+			}
+			inputArch.set(i, replacementString);
+		}
+		
+		try{
+			
+			
+        	Architecture architecture = agentAG.defineNewArch(inputArch);
+            // Evaluate the architecture
+            Result result = agentAE.evaluateAgentArchitecture(architecture,"Slow");
             
             // Save the score and the cost
             double cost = result.getCost();
