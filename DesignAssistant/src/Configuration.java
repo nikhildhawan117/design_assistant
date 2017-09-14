@@ -210,7 +210,9 @@ public class Configuration {
 				((Graphics2D)g).draw(s);
 				((Graphics2D)g).setStroke(oldStroke);
 				//10 and 20 represent position of letter (instrument type) in square
-				g.drawString(orbits[i].substring(j, j+1),x+10,y+50);
+				//g.drawString(orbits[i].substring(j, j+1),x+10,y+50);
+				//this is gross but we are indexing the image array by the letter
+				g.drawImage(TableComponent.symbols.get((int)orbits[i].substring(j, j+1).charAt(0)-(int)'A'),x,y, null);
 				x+= (between_padding+TuioBlock.block_size);
 				k++;
 				if(k>numCols) {

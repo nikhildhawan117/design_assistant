@@ -50,6 +50,7 @@ public class TuioBlock extends TuioObject{
 		return num_to_str.apply(mod_id);
 	}
 	
+	
 	PathIterator getPathItr(int width,int height){
 		float Xpos = xpos*width;
 		float Ypos = ypos*height;
@@ -110,7 +111,7 @@ public class TuioBlock extends TuioObject{
 		setCoords(x_trans, y_trans);
 		g.draw(s);
 		
-		g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
+		//g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
 		
 	}
 	

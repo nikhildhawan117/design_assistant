@@ -36,7 +36,7 @@ public class PointMouseAdapter extends MouseAdapter {
 				String configString = gp.getConfig().getBinaryString();
 				double science = gp.x_dim/4000;
 				double cost = gp.y_dim*12;
-				logger.info(configString + " " + science + " " + cost);
+				logger.info(DesignAssistant.CLICK_EVENT + configString + " " + science + " " + cost);
 				if(graphDisplayComponent.currentSelectedPoint != null)
 					graphDisplayComponent.currentSelectedPoint.isSelected = false;
 				

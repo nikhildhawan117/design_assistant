@@ -343,7 +343,7 @@ public class DesignAssistant {
 				
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
-				if(graphDisplayComponent.getMode()=="Exploration") {
+				if(!t4 && graphDisplayComponent.getMode()=="Exploration") {
 					//System.out.println("Inner");
 					
 					//					if(curT != null){
@@ -393,29 +393,69 @@ public class DesignAssistant {
 			//such that the most recently explored point was not already 
 			//explored by the agent and such that the agent is not 
 			//currently exploring a point
-			if(!currentConfig.equals(currentReferenceConfig) && !CollaborativeAgent.agentLock) {
+			//if(!currentConfig.equals(currentReferenceConfig) && !CollaborativeAgent.agentLock) {
+			if(!CollaborativeAgent.agentLock) {
 				System.out.println("AGENT1");
-				currentReferenceConfig = currentConfig;
+				//currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
-				if((t3 || t4) && !currentReferenceConfig.equals(new Configuration())) {
+				if((t3) && !currentConfig.equals(new Configuration())) {
 					System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
-							String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
-							for(int i = 0; i < agentConfigs.length; i++) {
-								Configuration agentConfiguration = new Configuration(agentConfigs[i]);
-								double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
-								GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
-								agentPoint.fromAgent = true;
-								graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
-								String configString = agentPoint.getConfig().getBinaryString();
-								double science = agentPoint.x_dim/4000;
-								double cost = agentPoint.y_dim*12;
-								logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+							try{
+								System.out.println("THREADSTART");
+								String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
+								for(int i = 0; i < agentConfigs.length; i++) {
+									Configuration agentConfiguration = new Configuration(agentConfigs[i]);
+									double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
+									GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
+									agentPoint.fromAgent = true;
+									graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
+									String configString = agentPoint.getConfig().getBinaryString();
+									double science = agentPoint.x_dim/4000;
+									double cost = agentPoint.y_dim*12;
+									logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+								}
+								System.out.println("THREADEND");
+								CollaborativeAgent.agentLock = false;
+							} catch(Exception e) {
+								CollaborativeAgent.agentLock = false;
 							}
-							CollaborativeAgent.agentLock = false;
+						}
+					}, "point_calculation").start();
+				}
+				
+				if(t4) {
+					System.out.println("AGENT2");
+					CollaborativeAgent.agentLock = true;
+					new Thread(new Runnable() {
+						public void run() {
+							try{
+								System.out.println("THREADSTART");
+								String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentReferenceConfig.getBinaryOneHot());
+								double max_ratio = 0;
+								for(int i = 0; i < agentConfigs.length; i++) {
+									Configuration agentConfiguration = new Configuration(agentConfigs[i]);
+									double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
+									GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
+									agentPoint.fromAgent = true;
+									graphDisplayComponent.addGraphPoint(agentPoint);
+									String configString = agentPoint.getConfig().getBinaryString();
+									double science = agentPoint.x_dim/4000;
+									double cost = agentPoint.y_dim*12;
+									if(cost != 0 && science/cost > max_ratio) {
+										max_ratio = science/cost;
+										currentReferenceConfig = agentConfiguration;
+									}
+									logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+								}
+								System.out.println("THREADEND");
+								CollaborativeAgent.agentLock = false;
+							} catch(Exception e) {
+								CollaborativeAgent.agentLock = false;
+							}
 						}
 					}, "point_calculation").start();
 				}
@@ -449,8 +489,8 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(1);
-        agentAE.init(4);
+        AE.init(4);
+       // agentAE.init(1);
 	}
 	
 	/*

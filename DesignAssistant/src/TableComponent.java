@@ -2,7 +2,11 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import TUIO.*;
 
@@ -12,6 +16,7 @@ public class TableComponent extends JComponent{
 	private Hashtable<Long,TuioBlock> blockList;
 	public static int width, height;
 	public static int numOrbits = 5;
+	public static ArrayList<Image> symbols;
 	private float scale = 1.0f;
 	private Color[] orbitColors = {Color.blue, Color.red};
 	Configuration currentConfig;
@@ -24,6 +29,20 @@ public class TableComponent extends JComponent{
 		this.blockList = blockList;
 		this.currentConfig = new Configuration(blockList);
 		this.prevConfig = new Configuration(blockList);
+		symbols = new ArrayList<Image>();
+		try{
+			File  directory = new File("symbols");
+			for (File file : directory.listFiles())
+			{
+			    if(file.getName().toLowerCase().endsWith(".jpg"))
+			    {
+			    	symbols.add(ImageIO.read(file).getScaledInstance(TuioBlock.block_size, TuioBlock.block_size,Image.SCALE_DEFAULT));
+			    }
+			}
+		}
+		catch(IOException e){
+			System.out.println("Problem Loading Images");
+		}
 	}
 	
 	
