@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.*;
+
+
 import TUIO.*;
 
 import rbsa.eoss.Architecture;
@@ -427,7 +429,7 @@ public class DesignAssistant {
 					}, "point_calculation").start();
 				}
 				
-				if(t4) {
+				/*if(t4) {
 					System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
@@ -458,6 +460,34 @@ public class DesignAssistant {
 							}
 						}
 					}, "point_calculation").start();
+				}*/
+				
+				if(t4) {
+					System.out.println("AGENT2");
+					CollaborativeAgent.agentLock = true;
+					new Thread(new Runnable() {
+						public void run() {
+							try{
+								System.out.println("THREADSTART");
+								GeneticCollaborativeAgent agent = new GeneticCollaborativeAgent(AG, AE, 12);
+								GraphPoint[] currentGraphPoints = agent.getCurrentGraphPoints();
+								while (true) {
+									for (int i = 0; i < currentGraphPoints.length; i++) {
+										graphDisplayComponent.addGraphPoint(currentGraphPoints[i]);
+										String configString = currentGraphPoints[i].getConfig().getBinaryString();
+										double science = currentGraphPoints[i].x_dim/4000;
+										double cost = currentGraphPoints[i].y_dim*12;
+										logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+									}
+									System.out.println("NEXT");
+									agent.getNextGen();
+									currentGraphPoints = agent.getCurrentGraphPoints();
+								}
+							} catch(Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}, "point_calculation").start();
 				}
 			}
 			
@@ -481,6 +511,7 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
+        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
       	AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
