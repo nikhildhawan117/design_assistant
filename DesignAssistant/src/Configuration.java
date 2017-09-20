@@ -203,6 +203,7 @@ public class Configuration {
 			for(int j = 0; j < orbits[i].length(); j++) {
 				g.setColor(Color.white);
 				//x+=5;
+				//x+=5;
 				s = new RoundRectangle2D.Float((float)x,(float)y,(float)TuioBlock.block_size,(float)TuioBlock.block_size,(float)TuioBlock.block_size/8,(float)TuioBlock.block_size/8);
 				
 				Stroke oldStroke = ((Graphics2D)g).getStroke();
