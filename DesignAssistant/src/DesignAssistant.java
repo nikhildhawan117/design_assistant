@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.logging.FileHandler;
@@ -49,7 +50,7 @@ public class DesignAssistant {
 	public static final String TREATMENT_3 = "TREATMENT_3";
 	public static final String TREATMENT_4 = "TREATMENT_4";
 	public static final String TREATMENT_TRIAL = "TREATMENT_TRIAL";
-
+	public static final String logDelimiter = ",";
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
 	
@@ -88,19 +89,22 @@ public class DesignAssistant {
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
+		System.setProperty("java.util.logging.SimpleFormatter.format",
+                "%1$tQ,%4$s,%5$s%n");
 		table_width = (int)gs[0].getDefaultConfiguration().getBounds().getWidth()-table_width_offset;
 		table_height = (int)gs[0].getDefaultConfiguration().getBounds().getHeight();
 		logger = Logger.getLogger("Design Assistant User Study File Log");
 		//remove console handler
 		logger.setUseParentHandlers(false);
 		try {
-			fileHandler = new FileHandler("./user_filelog.log");
+			fileHandler = new FileHandler("./user_filelog_"+System.currentTimeMillis()+".log");
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		logger.addHandler(fileHandler);
+		
 		SimpleFormatter formatter = new SimpleFormatter();
 		fileHandler.setFormatter(formatter);
 		//initialize static variables
@@ -202,7 +206,7 @@ public class DesignAssistant {
 		JButton btn1 = new JButton("Treatment 1");
 		JButton btn2 = new JButton("Treatment 2");
 		JButton btn3 = new JButton("Treatment 3");
-		JButton btn4 = new JButton("Treatment 4");
+		JButton btn4 = new JButton("Treatment 4"); //computer only
 		JButton btn5 = new JButton("Demo Treatment");
 		
 		btn1.addActionListener(new ActionListener() {		
@@ -213,7 +217,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = false;
-				logger.info(TREATMENT_1 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
+				logger.info(TREATMENT_1 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("1");
 			}
 		});
@@ -226,7 +230,7 @@ public class DesignAssistant {
 				t2 = true;
 				t3 = false;
 				t4 = false;
-				logger.info(TREATMENT_2 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
+				logger.info(TREATMENT_2 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("2");
 			}
 		});
@@ -238,7 +242,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = true;
 				t4 = false;
-				logger.info(TREATMENT_3 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
+				logger.info(TREATMENT_3 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("3");
 			}
 		});
@@ -250,7 +254,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = true;
-				logger.info(TREATMENT_4 + " " + currentConfig.getBinaryString() + " " + "N/A" + " " + "N/A");
+				logger.info(TREATMENT_4 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("4");
 			}
 		});
@@ -323,7 +327,7 @@ public class DesignAssistant {
 			
 			//Will not terminate any intelligent Agent threads, need to fix this
 			if(currentConfig.getPhysicalButtons().contains(new StringBuilder("O")) && !prevConfig.getPhysicalButtons().contains(new StringBuilder("O"))) {
-				logger.info(CLEAR_EVENT + " " + currentConfig.getBinaryString() + " " + 0 + " " + 0);
+				logger.info(CLEAR_EVENT + logDelimiter + currentConfig.getBinaryString() + logDelimiter + 0 + logDelimiter + 0);
 			}
 			
 			
@@ -373,7 +377,7 @@ public class DesignAssistant {
 								String configString = nextPoint.getConfig().getBinaryString();
 								double science = nextPoint.x_dim/4000;
 								double cost = nextPoint.y_dim*12;
-								logger.info(EXPLORE_EVENT + " " + configString + " " + science + " " + cost);
+								logger.info(EXPLORE_EVENT + logDelimiter + configString + logDelimiter + science + logDelimiter + cost);
 								}
 							} catch(NullPointerException ce) {
 								return;
@@ -385,7 +389,7 @@ public class DesignAssistant {
 				}
 				
 				else {
-					logger.info(FILTER_EVENT + " " + currentConfig.getBinaryString() + " " + -1 + " " + -1);
+					logger.info(FILTER_EVENT + logDelimiter + currentConfig.getBinaryString() + logDelimiter + -1 + logDelimiter + -1);
 				}
 			}
 			
@@ -395,17 +399,17 @@ public class DesignAssistant {
 			//currently exploring a point
 			//if(!currentConfig.equals(currentReferenceConfig) && !CollaborativeAgent.agentLock) {
 			if(!CollaborativeAgent.agentLock) {
-				System.out.println("AGENT1");
+				//System.out.println("AGENT1");
 				//currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
 				if((t3) && !currentConfig.equals(new Configuration())) {
-					System.out.println("AGENT2");
+					//System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
 							try{
-								System.out.println("THREADSTART");
+								//System.out.println("THREADSTART");
 								String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
 								for(int i = 0; i < agentConfigs.length; i++) {
 									Configuration agentConfiguration = new Configuration(agentConfigs[i]);
@@ -416,9 +420,9 @@ public class DesignAssistant {
 									String configString = agentPoint.getConfig().getBinaryString();
 									double science = agentPoint.x_dim/4000;
 									double cost = agentPoint.y_dim*12;
-									logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+									logger.info(AGENT_EVENT + logDelimiter + configString + logDelimiter + science + logDelimiter + cost);
 								}
-								System.out.println("THREADEND");
+								//System.out.println("THREADEND");
 								CollaborativeAgent.agentLock = false;
 							} catch(Exception e) {
 								CollaborativeAgent.agentLock = false;
@@ -428,7 +432,7 @@ public class DesignAssistant {
 				}
 				
 				if(t4) {
-					System.out.println("AGENT2");
+					//System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
@@ -449,7 +453,12 @@ public class DesignAssistant {
 										max_ratio = science/cost;
 										currentReferenceConfig = agentConfiguration;
 									}
-									logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
+									logger.info(AGENT_EVENT + logDelimiter + configString + logDelimiter + science + logDelimiter + cost);
+									double jump = Math.random();
+									if(jump<0.1){
+										int jumpIndex = (int)Math.random()*agentConfigs.length;
+										currentReferenceConfig = new Configuration(agentConfigs[jumpIndex]);
+									}
 								}
 								System.out.println("THREADEND");
 								CollaborativeAgent.agentLock = false;
