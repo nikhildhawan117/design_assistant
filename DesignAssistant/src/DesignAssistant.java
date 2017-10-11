@@ -71,6 +71,7 @@ public class DesignAssistant {
 	private Configuration currentReferenceConfig;
 	private GraphPoint currentGP;
 	private char[] currentCipher;
+	private int orbitScrambleDist=0;
 	public Logger logger;
 	private FileHandler fileHandler;
 	
@@ -152,7 +153,7 @@ public class DesignAssistant {
 			currentCipher[i] = (char)('A' + (i + shift)%12);
 		}
 	}
-
+	
 	
 	public TuioListener getTuioListener() {
 		return blockListener;
@@ -212,6 +213,7 @@ public class DesignAssistant {
 		btn1.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(0);
+				orbitScrambleDist = 0;
 				t1 = true;
 				GraphPoint.t1 = true;
 				t2 = false;
@@ -225,6 +227,7 @@ public class DesignAssistant {
 		btn2.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(0);
+				orbitScrambleDist = 0;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = true;
@@ -237,6 +240,7 @@ public class DesignAssistant {
 		btn3.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(6);
+				orbitScrambleDist = 1;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = false;
@@ -249,6 +253,7 @@ public class DesignAssistant {
 		btn4.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(9);
+				orbitScrambleDist = 2;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = false;
@@ -262,6 +267,7 @@ public class DesignAssistant {
 		btn5.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(3);
+				orbitScrambleDist = 3;
 				t1 = false;
 				GraphPoint.t1 = false;
 				t2 = false;
@@ -517,6 +523,10 @@ public class DesignAssistant {
 			}
 			inputArch.set(i, replacementString);
 		}
+		//scramble the orbits (by shifting for now)
+		//note that by shifting instruments down one orbit, I'm shifting the frame of reference up one orbit
+		//thus with dist=1, A in orbit 2 before is equivalent to A in orbit 1 after scramble
+		Collections.rotate(inputArch, orbitScrambleDist);
 		
 		try{
 			
@@ -554,6 +564,8 @@ public class DesignAssistant {
 			}
 			inputArch.set(i, replacementString);
 		}
+		//scramble the orbits
+		Collections.rotate(inputArch, orbitScrambleDist);
 		
 		try{
 			
