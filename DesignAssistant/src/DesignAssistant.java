@@ -158,17 +158,19 @@ public class DesignAssistant {
 	
 	public void setupTableWindow(GraphicsDevice gd) {
 		tableFrame = new JFrame(gd.getDefaultConfiguration());
-		tableFrame.setUndecorated(true);
+		//tableFrame.setUndecorated(true);
+		tableFrame.setUndecorated(false);
 		Rectangle gcBounds = gd.getDefaultConfiguration().getBounds();
 		
 		
 		tableFrame.setTitle("Block Space");
-		tableFrame.setResizable(false);
+		//tableFrame.setResizable(false);
+		tableFrame.setResizable(true);
 		Insets insets = tableFrame.getInsets();		
 		tableFrame.setSize(gcBounds.width, gcBounds.height);
 	
 		tableFrame.setCursor(Cursor.getDefaultCursor());
-		gd.setFullScreenWindow(tableFrame);
+		//gd.setFullScreenWindow(tableFrame);
 		tableFrame.setLocation(gcBounds.x+table_width_offset, gcBounds.y);
 		tableFrame.addWindowListener(
 				new WindowAdapter() { 
@@ -469,25 +471,15 @@ public class DesignAssistant {
 						public void run() {
 							try{
 								System.out.println("THREADSTART");
-								GeneticCollaborativeAgent agent = new GeneticCollaborativeAgent(AG, AE, 12);
-								GraphPoint[] currentGraphPoints = agent.getCurrentGraphPoints();
+								GeneticCollaborativeAgent agent = new GeneticCollaborativeAgent(AG, AE, graphDisplayComponent, logger, 50);
 								while (true) {
-									for (int i = 0; i < currentGraphPoints.length; i++) {
-										graphDisplayComponent.addGraphPoint(currentGraphPoints[i]);
-										String configString = currentGraphPoints[i].getConfig().getBinaryString();
-										double science = currentGraphPoints[i].x_dim/4000;
-										double cost = currentGraphPoints[i].y_dim*12;
-										logger.info(AGENT_EVENT + " " + configString + " " + science + " " + cost);
-									}
-									System.out.println("NEXT");
-									agent.getNextGen();
-									currentGraphPoints = agent.getCurrentGraphPoints();
+									agent.updatePopulation();
 								}
 							} catch(Exception e) {
 								e.printStackTrace();
 							}
 						}
-					}, "point_calculation").start();
+					}, "agent_point_calculation").start();
 				}
 			}
 			
@@ -520,7 +512,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(4);
+        AE.init(5);
        // agentAE.init(1);
 	}
 	
@@ -582,7 +574,8 @@ public class DesignAssistant {
 			
         	Architecture architecture = agentAG.defineNewArch(inputArch);
             // Evaluate the architecture
-            Result result = agentAE.evaluateAgentArchitecture(architecture,"Slow");
+           // Result result = agentAE.evaluateAgentArchitecture(architecture,"Slow");
+            Result result = agentAE.evaluateArchitecture(architecture,"Slow");
             
             // Save the score and the cost
             double cost = result.getCost();
