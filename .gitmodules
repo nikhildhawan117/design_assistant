@@ -1,0 +1,3 @@
+[submodule "jMetal"]
+	path = jMetal
+	url = https://github.com/jMetal/jMetal.git
