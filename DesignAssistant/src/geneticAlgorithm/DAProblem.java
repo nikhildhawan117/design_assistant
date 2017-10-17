@@ -60,5 +60,9 @@ public class DAProblem extends AbstractGenericProblem<DASolution> {
 		// TODO Auto-generated method stub
 		return new DASolution(this);
 	}
+	
+	public void plotObjectives(Configuration configuration, double science, double cost){
+		this.DA.addGraphPoint(configuration,science,cost);
+	}
 
 }

@@ -683,4 +683,10 @@ public static void main(String argv[]) {
 		
 	}
 
+	public void addGraphPoint(Configuration configuration, double science, double cost){
+		GraphPoint agentPoint = new GraphPoint(configuration, science*4000, cost/12.0, xMin, xMax, yMin, yMax);
+	 	agentPoint.fromAgent = true;
+	 	graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
+	}
+
 }

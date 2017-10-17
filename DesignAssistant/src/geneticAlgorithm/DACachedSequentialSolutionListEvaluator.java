@@ -27,6 +27,7 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 	@Override
 	public List<DASolution> evaluate(List<DASolution> solutionList, Problem<DASolution> problem) {
 		//loop through the solutions, if we've calculated science/cost before, dehash it, otherwise calculate
+		boolean isFirstRun = cachedSolutions.isEmpty();
 		solutionList.stream().forEach(s -> {
 			double [] cachedSolution = cachedSolutions.get(s.getVariableValue(0));
 			if(cachedSolution!=null){
@@ -42,7 +43,11 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 				if(diversityMetric!=null){
 					s.setObjective(2,diversityMetric.evaluate(s, solutionList));
 				}
-				cachedSolutions.put(s.getVariableValue(0),new double[] {s.getObjective(0),s.getObjective(1)});	
+				cachedSolutions.put(s.getVariableValue(0),new double[] {s.getObjective(0),s.getObjective(1)});
+				if(!isFirstRun){
+					DAProblem daProblem = (DAProblem) problem;
+					daProblem.plotObjectives(s.getVariableValue(0),s.getObjective(0),s.getObjective(1));
+				}
 			}
 		});
 		return solutionList;
