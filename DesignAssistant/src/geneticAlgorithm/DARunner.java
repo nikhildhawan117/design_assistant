@@ -45,8 +45,7 @@ public class DARunner extends AbstractAlgorithmRunner {
     problem = new DAProblem(3,1,da);//ProblemUtils.<DoubleSolution> loadProblem(problemName);
 
     double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new DACrossover(crossoverProbability, crossoverDistributionIndex) ;
+    crossover = new DACrossover(crossoverProbability) ;
 
     double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
     double mutationDistributionIndex = 20.0 ;
