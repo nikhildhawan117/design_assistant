@@ -17,7 +17,7 @@ import java.util.logging.SimpleFormatter;
 
 import javax.swing.*;
 import TUIO.*;
-
+import geneticAlgorithm.DARunner;
 import rbsa.eoss.Architecture;
 import rbsa.eoss.ArchitectureEvaluator;
 import rbsa.eoss.ArchitectureGenerator;
@@ -479,8 +479,9 @@ public class DesignAssistant {
 				}
 				else if(t5){
 					CollaborativeAgent.agentLock = true;
-					//run the GA
-					
+					//run the GA--the constructor runs it
+					DARunner gaRunner = new DARunner(this);
+					//need to give up the lock at some point
 					
 				}
 				
