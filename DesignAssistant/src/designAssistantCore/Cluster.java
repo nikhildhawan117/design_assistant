@@ -1,3 +1,4 @@
+package designAssistantCore;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.HashSet;

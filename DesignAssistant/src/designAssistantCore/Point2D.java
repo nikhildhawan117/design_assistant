@@ -1,3 +1,4 @@
+package designAssistantCore;
 /******************************************************************************
  *  Compilation:  javac Point2D.java
  *  Execution:    java Point2D x0 y0 n

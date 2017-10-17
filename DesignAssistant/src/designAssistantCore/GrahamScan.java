@@ -1,3 +1,4 @@
+package designAssistantCore;
 /******************************************************************************
  *  Compilation:  javac GrahamaScan.java
  *  Execution:    java GrahamScan < input.txt

@@ -1,3 +1,4 @@
+package designAssistantCore;
 import java.util.Random;
 
 public class CollaborativeAgent {

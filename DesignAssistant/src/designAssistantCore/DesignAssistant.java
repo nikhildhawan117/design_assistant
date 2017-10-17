@@ -1,3 +1,4 @@
+package designAssistantCore;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
@@ -79,7 +80,9 @@ public class DesignAssistant {
 	public boolean t2;
 	public boolean t3;
 	public boolean t4;
+	public boolean t5;
 	public boolean tt; //trial treatment
+	
 	
 	private int counter;
 	private final int counter_threshold = 3;
@@ -437,7 +440,7 @@ public class DesignAssistant {
 					}, "point_calculation").start();
 				}
 				
-				if(t4) {
+				else if(t4) {
 					//System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
@@ -474,6 +477,13 @@ public class DesignAssistant {
 						}
 					}, "point_calculation").start();
 				}
+				else if(t5){
+					CollaborativeAgent.agentLock = true;
+					//run the GA
+					
+					
+				}
+				
 			}
 			
 			

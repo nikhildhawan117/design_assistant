@@ -1,3 +1,4 @@
+package designAssistantCore;
 import java.awt.Component;
 import java.awt.event.*;
 import java.util.HashMap;
