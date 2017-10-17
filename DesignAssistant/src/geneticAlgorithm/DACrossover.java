@@ -42,13 +42,13 @@ public class DACrossover implements CrossoverOperator<DASolution> {
 		    return doCrossover(crossoverProbability, parents.get(0), parents.get(1)) ;
 	}
 
-	private List<DASolution> doCrossover(double probability, DASolution parent1, DASolution parent2) {
+	private List<DASolution> doCrossover(double probabilityThreshold, DASolution parent1, DASolution parent2) {
 		// TODO Auto-generated method stub
 		List<DASolution> offspring = new ArrayList<>(2);
 	    offspring.add((DASolution) parent1.copy()) ;
 	    offspring.add((DASolution) parent2.copy()) ;
 
-	    if (crossoverRandomGenerator.getRandomValue() < probability) {
+	    if (crossoverRandomGenerator.getRandomValue() < probabilityThreshold) {
 	      // 1. Get the total number of bits
 	      int totalNumberOfBits = parent1.getVariableValue(0).getBinaryString().length();
 	      // 2. Calculate the point to make the crossover
