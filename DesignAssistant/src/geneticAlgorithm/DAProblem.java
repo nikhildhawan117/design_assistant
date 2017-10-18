@@ -51,8 +51,10 @@ public class DAProblem extends AbstractGenericProblem<DASolution> {
 		// TODO Auto-generated method stub
 		Configuration configuration = solution.getVariableValue(0);
 		double [] result = DA.evaluateArchitecture(configuration);
-		solution.setObjective(0, result[0]);
-		solution.setObjective(1,result[1]);	
+		
+		solution.setObjective(0, 1-result[0]);
+		//inverting cost
+		solution.setObjective(1, result[1]);	
 	}
 
 	@Override

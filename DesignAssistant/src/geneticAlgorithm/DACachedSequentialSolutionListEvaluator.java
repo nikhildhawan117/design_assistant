@@ -35,19 +35,23 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 				s.setObjective(1, cachedSolution[1]);
 				if(diversityMetric!=null){
 					//we can't cache the diversity b/c it depends on the population, which changes
-					s.setObjective(2, diversityMetric.evaluate(s, solutionList));
+					s.setObjective(2, 60-diversityMetric.evaluate(s, solutionList));
 				}
 			}
 			else{
 				problem.evaluate(s);
 				if(diversityMetric!=null){
-					s.setObjective(2,diversityMetric.evaluate(s, solutionList));
+					s.setObjective(2,60-diversityMetric.evaluate(s, solutionList));
 				}
 				cachedSolutions.put(s.getVariableValue(0),new double[] {s.getObjective(0),s.getObjective(1)});
 				if(!isFirstRun){
 					DAProblem daProblem = (DAProblem) problem;
-					daProblem.plotObjectives(s.getVariableValue(0),s.getObjective(0),s.getObjective(1));
+					
+					daProblem.plotObjectives(s.getVariableValue(0),(1-s.getObjective(0)),s.getObjective(1));
 				}
+				
+					System.out.println("Science: " + (1-s.getObjective(0)) + " Cost: " + s.getObjective(1));
+				
 			}
 		});
 		return solutionList;

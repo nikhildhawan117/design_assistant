@@ -63,7 +63,7 @@ public class DARunner extends AbstractAlgorithmRunner {
         .setSolutionListEvaluator(evaluator)
         .setVariant(NSGAIIBuilder.NSGAIIVariant.SteadyStateNSGAII)
         .setMaxEvaluations(25000)
-        .setPopulationSize(300)
+        .setPopulationSize(50)
         .build() ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

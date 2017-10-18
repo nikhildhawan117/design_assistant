@@ -439,7 +439,7 @@ public class DesignAssistant {
 						}
 					}, "point_calculation").start();
 				}
-				
+				/*
 				else if(t4) {
 					//System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
@@ -476,12 +476,17 @@ public class DesignAssistant {
 							}
 						}
 					}, "point_calculation").start();
-				}
-				else if(t5){
+				} */
+				else if(t4){
 					CollaborativeAgent.agentLock = true;
-					//run the GA--the constructor runs it
-					DARunner gaRunner = new DARunner(this);
-					//need to give up the lock at some point
+					new Thread(new Runnable() {
+						public void run() {
+							//run the GA--the constructor runs it
+							DARunner gaRunner = new DARunner(thisAssistant);
+							//need to give up the lock at some point
+						}
+					}, "point_calculation").start();
+					
 					
 				}
 				
@@ -507,7 +512,8 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-      	AE = ArchitectureEvaluator.getInstance();
+        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
+        AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
         agentAE = ArchitectureEvaluator.getInstance();
