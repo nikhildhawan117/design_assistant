@@ -42,7 +42,7 @@ public class DARunner extends AbstractAlgorithmRunner {
     SolutionListEvaluator<DASolution> evaluator;
     DADiversity diversityMetric;
     
-    problem = new DAProblem(3,1,da);//ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new DAProblem(2,1,da);//ProblemUtils.<DoubleSolution> loadProblem(problemName);
 
     double crossoverProbability = 0.9 ;
     crossover = new DACrossover(crossoverProbability) ;
@@ -67,7 +67,7 @@ public class DARunner extends AbstractAlgorithmRunner {
         .build() ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
+        .execute();
 
     List<DASolution> population = algorithm.getResult() ;
     long computingTime = algorithmRunner.getComputingTime() ;

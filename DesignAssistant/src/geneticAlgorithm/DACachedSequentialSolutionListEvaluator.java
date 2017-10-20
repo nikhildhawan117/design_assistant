@@ -38,16 +38,11 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 			if(cachedSolution!=null){
 				s.setObjective(0, cachedSolution[0]);
 				s.setObjective(1, cachedSolution[1]);
-				if(diversityMetric!=null){
-					//we can't cache the diversity b/c it depends on the population, which changes
-					s.setObjective(2, 60-diversityMetric.evaluate(s, solutionList));
-				}
+				
 			}
 			else{
 				problem.evaluate(s);
-				if(diversityMetric!=null){
-					s.setObjective(2,60-diversityMetric.evaluate(s, solutionList));
-				}
+				
 				cachedSolutions.put(s.getVariableValue(0),new double[] {s.getObjective(0),s.getObjective(1)});
 				if(!isFirstRun){
 					DAProblem daProblem = (DAProblem) problem;
