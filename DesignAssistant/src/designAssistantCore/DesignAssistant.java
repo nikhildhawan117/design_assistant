@@ -54,7 +54,7 @@ public class DesignAssistant {
 	public static final String logDelimiter = ",";
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
-	
+	private DARunner gaRunner;
 	private ArchitectureGenerator agentAG;
 	private ArchitectureEvaluator agentAE;
 	
@@ -82,6 +82,7 @@ public class DesignAssistant {
 	public boolean t4;
 	public boolean t5;
 	public boolean tt; //trial treatment
+	public boolean clear_screen;
 	
 	
 	private int counter;
@@ -142,9 +143,6 @@ public class DesignAssistant {
 		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
 		blockListener = new TuioBlockListener(blockList, currentConfig, prevConfig);
 		
-		
-		
-
 		showTableWindow();
 		showGraphWindow();
 		
@@ -222,6 +220,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = false;
+				clear_screen = false;
 				logger.info(TREATMENT_1 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("1");
 			}
@@ -236,6 +235,7 @@ public class DesignAssistant {
 				t2 = true;
 				t3 = false;
 				t4 = false;
+				clear_screen = false;
 				logger.info(TREATMENT_2 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("2");
 			}
@@ -249,6 +249,7 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = true;
 				t4 = false;
+				clear_screen = false;
 				logger.info(TREATMENT_3 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("3");
 			}
@@ -262,14 +263,20 @@ public class DesignAssistant {
 				t2 = false;
 				t3 = false;
 				t4 = true;
-				logger.info(TREATMENT_4 + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
+				clear_screen = false;
+				logger.info("DEMO_TREATMENT" + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("4");
 			}
 		});
 		
 		btn5.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
+				clear_screen = true;
 				graphDisplayComponent.removeAllGraphPoints();
+				if (gaRunner != null) {
+					gaRunner.terminate();
+					gaRunner = null;
+				}
 				logger.info("CLEAR_SCREEN" + logDelimiter + currentConfig.getBinaryString() + logDelimiter + "N/A" + logDelimiter + "N/A");
 				//System.out.println("1");
 			}
@@ -340,7 +347,7 @@ public class DesignAssistant {
 			if (!currentConfig.equals(prevConfig)) {
 				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
-				if(!t2 && graphDisplayComponent.getMode()=="Exploration") {
+				if(!t2 && graphDisplayComponent.getMode()=="Exploration" || clear_screen) {
 					
 					curT = new Thread(new Runnable() {
 						public void run() {
@@ -385,7 +392,7 @@ public class DesignAssistant {
 				//currentReferenceConfig = currentConfig;
 				//ensures the agent is not exploring a point defined by the empty configuration
 				//this can be removed if desired
-				if((t3) && !currentConfig.equals(new Configuration())) {
+				if((t3) && !currentConfig.equals(new Configuration()) && !clear_screen) {
 					//System.out.println("AGENT2");
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
@@ -393,7 +400,7 @@ public class DesignAssistant {
 							try{
 								//System.out.println("THREADSTART");
 								String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
-								for(int i = 0; i < agentConfigs.length; i++) {
+								for(int i = 0; i < agentConfigs.length && !clear_screen; i++) {
 									Configuration agentConfiguration = new Configuration(agentConfigs[i]);
 									double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
 									GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
@@ -413,16 +420,16 @@ public class DesignAssistant {
 					}, "point_calculation").start();
 				}
 
-				else if(t2){
+				else if(t2 && !clear_screen){
 					CollaborativeAgent.agentLock = true;
 					new Thread(new Runnable() {
 						public void run() {
 							//run the GA--the constructor runs it
 							DARunner gaRunner = new DARunner(thisAssistant);
+							gaRunner.init();
 							//need to give up the lock at some point
 						}
-					}, "point_calculation").start();
-					
+					}, "point_calculation2").start();
 					
 				}
 				

@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class CollaborativeAgent {
 
-	static boolean agentLock = false;
+	public static boolean agentLock = false;
 	
 	public static String[] getLocalConfig(long configOneHot) {
 		String str = String.format("%60s", Long.toBinaryString(configOneHot)).replace(" ", "0");

@@ -38,7 +38,6 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 			if(cachedSolution!=null){
 				s.setObjective(0, cachedSolution[0]);
 				s.setObjective(1, cachedSolution[1]);
-				
 			}
 			else{
 				problem.evaluate(s);
