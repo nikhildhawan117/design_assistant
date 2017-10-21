@@ -425,7 +425,7 @@ public class DesignAssistant {
 					new Thread(new Runnable() {
 						public void run() {
 							//run the GA--the constructor runs it
-							DARunner gaRunner = new DARunner(thisAssistant);
+							gaRunner = new DARunner(thisAssistant);
 							gaRunner.init();
 							//need to give up the lock at some point
 						}
@@ -453,9 +453,9 @@ public class DesignAssistant {
 	public void initRBSAEOSS() { 
         // Set a path to the project folder
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
-        //path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
+        path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
+        //path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
         AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
