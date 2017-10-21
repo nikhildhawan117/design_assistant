@@ -18,14 +18,20 @@ public class TuioBlock extends TuioObject{
 	//These are default value. Set values in Design Assistant.
 	public static int block_size = 105;
 	public static int table_size = 760;
-	public static final double ax_x = -1.706548908;
-	public static final double ax_y = - .07869167392;
-	public static final double cx = 2091.810068;
+	//public static final double ax_x = -1.706548908;
+	public static final double ax_x = -1.676548908;
+	//public static final double ax_y = - .07869167392;
+	//public static final double ax_y = - .08169167392;
+	public static final double ax_y = - .0229167392;
+	//public static final double cx = 2091.810068;
+	public static final double cx = 2035.810068;
 
 
 	public static final double ay_x =  -.08770692435;
-	public static final double ay_y = 1.662719449;
-	public static final double cy =  - 161.0721432;
+	//public static final double ay_y = 1.662719449;
+	public static final double ay_y = 1.9019449;
+	//public static final double cy =  - 161.0721432;
+	public static final double cy =  - 280.0721432;
 	public double x_pos;
 	public double y_pos;
 	
