@@ -1,7 +1,7 @@
 package geneticAlgorithm;
 
 import java.util.HashMap;
-
+import java.util.LinkedList;
 
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
@@ -51,8 +51,7 @@ public class DASolution extends AbstractGenericSolution<Configuration,DAProblem>
 	}
 
 	private void initializeConfiguration() {	
-	    Configuration randomConfig = new Configuration(getRandomConfigurationString());
-		setVariableValue(0, randomConfig);
+		setVariableValue(0, new Configuration(Configuration.EMPTY));
 	}
 	
 	private String getRandomConfigurationString(){

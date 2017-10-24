@@ -34,6 +34,12 @@ public class Configuration {
 		populateOrbits(blockList);
 	}
 	
+	public Configuration(ArrayList<String> input_arch) {
+		input_arch.toArray(orbits);
+		physicalButtons = "";
+		clusters = new LinkedList<Cluster>();
+	}
+	
 	public Configuration(String serial_input) {
 		orbits = new String[numOrbits];
 		physicalButtons = "";

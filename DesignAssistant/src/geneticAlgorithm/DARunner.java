@@ -66,7 +66,7 @@ public class DARunner extends AbstractAlgorithmRunner {
 				.setSelectionOperator(selection)
 				.setSolutionListEvaluator(evaluator)
 				.setMaxEvaluations(25000)
-				.setPopulationSize(50)
+				.setPopulationSize(200)
 				.build();
 	}
 	
