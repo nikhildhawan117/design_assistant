@@ -79,7 +79,7 @@ public class DARunner extends AbstractAlgorithmRunner {
 	}
 	
 	public void terminate() {
-		((DAssNSGAII<DASolution>)algorithm).terminate();;
+		((DAssNSGAII<DASolution>)algorithm).terminate();
 		CollaborativeAgent.agentLock = false;
 	}
 }

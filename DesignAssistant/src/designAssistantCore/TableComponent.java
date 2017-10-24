@@ -19,7 +19,7 @@ public class TableComponent extends JComponent{
 	public static int numOrbits = 5;
 	public static ArrayList<Image> symbols;
 	private float scale = 1.0f;
-	private Color[] orbitColors = {Color.blue, Color.red};
+	private Color[] orbitColors = {Color.blue, new Color(0,30,0)};
 	Configuration currentConfig;
 	Configuration prevConfig;
 	//invariant currentSelectedPoint must always point to the same object as in GraphComponent
