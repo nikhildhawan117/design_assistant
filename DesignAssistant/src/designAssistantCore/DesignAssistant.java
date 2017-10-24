@@ -455,7 +455,7 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-        //path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
+        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
         AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
