@@ -455,7 +455,7 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-        //path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
+        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
         AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
@@ -464,7 +464,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(4);
+        AE.init(1);
        // agentAE.init(1);
 	}
 	
@@ -503,7 +503,7 @@ public class DesignAssistant {
 				//System.out.println(inputArch.get(i));
 			}
 			//System.out.println("DONE");
-
+            System.out.println(config.getBinaryString() + "," + science + "," + cost);
     		return new double[] {science, cost};
         }
         catch(ArrayIndexOutOfBoundsException e) {

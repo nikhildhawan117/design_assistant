@@ -40,9 +40,17 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 				s.setObjective(1, cachedSolution[1]);
 			}
 			else{
-				problem.evaluate(s);
+				
+				
+				if(isFirstRun) 
+					((DAProblem)problem).evaluateInitialData(s);
+				
+				
+				else
+					problem.evaluate(s);
 				
 				cachedSolutions.put(s.getVariableValue(0),new double[] {s.getObjective(0),s.getObjective(1)});
+				
 				if(!isFirstRun){
 					DAProblem daProblem = (DAProblem) problem;
 					
@@ -50,7 +58,7 @@ public class DACachedSequentialSolutionListEvaluator implements SolutionListEval
 					logger.info("AGENT_EVENT" + "," + s.getVariableValue(0).getBinaryString() + "," + (1-s.getObjective(0)) + "," + s.getObjective(1));
 				}
 				
-					System.out.println("Science: " + (1-s.getObjective(0)) + " Cost: " + s.getObjective(1));
+					//System.out.println("Science: " + (1-s.getObjective(0)) + " Cost: " + s.getObjective(1));
 				
 			}
 		});
