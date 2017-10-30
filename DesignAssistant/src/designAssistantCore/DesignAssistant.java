@@ -228,8 +228,8 @@ public class DesignAssistant {
 		
 		btn2.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
-				makeCipher(0);
-				orbitScrambleDist = 0;
+				makeCipher(3);
+				orbitScrambleDist = 1;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = true;
@@ -243,7 +243,7 @@ public class DesignAssistant {
 		btn3.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(6);
-				orbitScrambleDist = 1;
+				orbitScrambleDist = 2;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = false;
@@ -257,7 +257,7 @@ public class DesignAssistant {
 		btn4.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				makeCipher(9);
-				orbitScrambleDist = 2;
+				orbitScrambleDist = 3;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = false;
