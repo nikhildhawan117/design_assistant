@@ -39,6 +39,11 @@ public class DesignAssistant {
 	private final int graph_width = yMax+75;
 	private final int graph_height = xMax+75;
 	private final int numOrbits = 5;
+	
+	private final int TABLE_DISPLAY_INDEX = 0;
+	private final int GRAPH_DISPLAY_INDEX = 1;
+	
+	
 
 	private final String preDataFile = "./EOSS_data.csv";
 	public static final String CLICK_EVENT = "CLICK_EVENT";
@@ -96,8 +101,8 @@ public class DesignAssistant {
 		GraphicsDevice[] gs = ge.getScreenDevices();
 		System.setProperty("java.util.logging.SimpleFormatter.format",
                 "%1$tQ,%4$s,%5$s%n");
-		table_width = (int)gs[0].getDefaultConfiguration().getBounds().getWidth()-table_width_offset;
-		table_height = (int)gs[0].getDefaultConfiguration().getBounds().getHeight();
+		table_width = (int)gs[TABLE_DISPLAY_INDEX].getDefaultConfiguration().getBounds().getWidth()-table_width_offset;
+		table_height = (int)gs[TABLE_DISPLAY_INDEX].getDefaultConfiguration().getBounds().getHeight();
 		logger = Logger.getLogger("Design Assistant User Study File Log");
 		//remove console handler
 		logger.setUseParentHandlers(false);
@@ -128,11 +133,11 @@ public class DesignAssistant {
 		currentReferenceConfig = new Configuration();
 		makeCipher(0);
 		initRBSAEOSS();
-		setupTableWindow(gs[0]);
+		setupTableWindow(gs[TABLE_DISPLAY_INDEX]);
 		if(gs.length > 1)
-			setupGraphWindow(gs[1]);
+			setupGraphWindow(gs[GRAPH_DISPLAY_INDEX]);
 		else
-			setupGraphWindow(gs[0]);
+			setupGraphWindow(gs[GRAPH_DISPLAY_INDEX]);
 		
 
 		
@@ -455,7 +460,7 @@ public class DesignAssistant {
         String path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         path = "/Users/designassistant/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval";
         //path = "/Users/mvl24/Documents/workspace/design_assistant_HRC2/RBSAEOSS-Eval2";
-        path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
+        //path = "/Users/Nikhil/Desktop/git_repo/RBSAEOSS-Eval-Copy";
         AE = ArchitectureEvaluator.getInstance();
       	AG = ArchitectureGenerator.getInstance();
         
