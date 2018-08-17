@@ -123,7 +123,7 @@ public class GraphPoint extends JComponent{
 		
 		if(isSelected) {
 			g.setColor(Color.blue);
-			g.drawOval(xPlot-2, yPlot-2, size+4, size+4);
+			g.drawOval(xPlot-8, yPlot-8, size+16, size+16);
 		}	
 	}
 	
