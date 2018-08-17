@@ -19,19 +19,19 @@ public class TuioBlock extends TuioObject{
 	public static int block_size = 105;
 	public static int table_size = 760;
 	//public static final double ax_x = -1.706548908;
-	public static final double ax_x = -1.676548908;
+	public static final double ax_x = -1.55076548908;
 	//public static final double ax_y = - .07869167392;
 	//public static final double ax_y = - .08169167392;
-	public static final double ax_y = - .0229167392;
+	public static final double ax_y = - .0109167392;
 	//public static final double cx = 2091.810068;
-	public static final double cx = 2035.810068;
+	public static final double cx = 1200.810068;
 
 
-	public static final double ay_x =  -.08770692435;
+	public static final double ay_x =  -.060770692435;
 	//public static final double ay_y = 1.662719449;
-	public static final double ay_y = 1.9019449;
+	public static final double ay_y = 1.5569449;
 	//public static final double cy =  - 161.0721432;
-	public static final double cy =  - 280.0721432;
+	public static final double cy =  - 360.0721432;
 	public double x_pos;
 	public double y_pos;
 	
@@ -118,7 +118,7 @@ public class TuioBlock extends TuioObject{
 		setCoords(x_trans, y_trans);
 		g.draw(s);
 		
-		//g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
+		g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
 		
 	}
 	
@@ -135,7 +135,7 @@ public class TuioBlock extends TuioObject{
 		}
 		
 		if (da!=0) {
-			AffineTransform trans = AffineTransform.getRotateInstance(da,tobj.getX(),tobj.getY());
+			AffineTransform trans = AffineTransform.getRotateInstance(-da,tobj.getX(),tobj.getY());
 			outline = trans.createTransformedShape(outline);
 		}
 

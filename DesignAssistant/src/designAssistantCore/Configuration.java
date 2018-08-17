@@ -15,6 +15,7 @@ public class Configuration {
 	private LinkedList<Cluster> clusters;
 	public static int numOrbits;
 	public static int orbit_space_width;
+	public static int shelfspace_width;
 	public static int orbit_space_height;
 	public static int numInstruments;
 	public final static String EMPTY = "000000000000000000000000000000000000000000000000000000000000";
@@ -74,7 +75,7 @@ public class Configuration {
 				//iterates through orbits until either tblock has been appropriately
 				//placed in orbits or orbits has been full iterated through
 				for(int i = 0; i < orbits.length; i++)  {
-					if(y<orbitHeight*(i+1) && y>orbitHeight*i && x < orbit_space_width) {
+					if(y<orbitHeight*(i+1) && y>orbitHeight*i && x < orbit_space_width && x > shelfspace_width) {
 						orbits[i] += tblock.toTuioLetter();
 						break;
 					}

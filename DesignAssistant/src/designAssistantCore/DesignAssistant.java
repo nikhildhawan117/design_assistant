@@ -1,5 +1,7 @@
 package designAssistantCore;
 import java.awt.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -57,6 +59,7 @@ public class DesignAssistant {
 	public static final String TREATMENT_4 = "TREATMENT_4";
 	public static final String TREATMENT_TRIAL = "TREATMENT_TRIAL";
 	public static final String logDelimiter = ",";
+	public static WSTalker rosPublisher;
 	private ArchitectureGenerator AG;
 	private ArchitectureEvaluator AE;
 	private DARunner gaRunner;
@@ -97,6 +100,30 @@ public class DesignAssistant {
 	
 	public DesignAssistant() {
 		
+//		try {
+//            // open websocket
+//            rosPublisher = new WSTalker(new URI("ws://daarm.ngrok.io"));
+//
+//            // add listener
+//            rosPublisher.addMessageHandler(new WSTalker.MessageHandler() {
+//                public void handleMessage(String message) {
+//                    System.out.println(message);
+//                }
+//            });
+//
+//            // send message to websocket advertising the published channels
+//            rosPublisher.sendMessage("{\"op\":\"advertise\",\"topic\":\"/blocks\",\"type\":\"std_msgs/String\"}");
+//            rosPublisher.sendMessage("{\"op\":\"advertise\",\"topic\":\"/config_targets\",\"type\":\"std_msgs/String\"}");
+//            // wait 5 seconds for messages from websocket
+//            Thread.sleep(5000);
+//
+//        } catch (InterruptedException ex) {
+//            System.err.println("InterruptedException exception: " + ex.getMessage());
+//        } catch (URISyntaxException ex) {
+//            System.err.println("URISyntaxException exception: " + ex.getMessage());
+//        }
+//    
+		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
 		System.setProperty("java.util.logging.SimpleFormatter.format",
@@ -119,6 +146,7 @@ public class DesignAssistant {
 		fileHandler.setFormatter(formatter);
 		//initialize static variables
 		Configuration.orbit_space_width = (int)(table_width*0.7);
+		Configuration.shelfspace_width = (int)(table_width*0.025);
 		Configuration.orbit_space_height = table_height;
 		Configuration.numOrbits = numOrbits;
 		Configuration.numInstruments = 12;
@@ -215,6 +243,7 @@ public class DesignAssistant {
 		JButton btn3 = new JButton("Collaborative Exploration");
 		JButton btn4 = new JButton("Demo Treatment");
 		JButton btn5 = new JButton("Clear Screen");
+		JButton btn6 = new JButton("Restart Web Socket");
 		
 		btn1.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
@@ -286,6 +315,33 @@ public class DesignAssistant {
 				//System.out.println("1");
 			}
 		});
+		
+		btn6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+		            // open websocket
+		            rosPublisher = new WSTalker(new URI("ws://daarm.ngrok.io"));
+
+		            // add listener
+		            rosPublisher.addMessageHandler(new WSTalker.MessageHandler() {
+		                public void handleMessage(String message) {
+		                    System.out.println(message);
+		                }
+		            });
+
+		            // send message to websocket advertising the published channels
+		            rosPublisher.sendMessage("{\"op\":\"advertise\",\"topic\":\"/blocks\",\"type\":\"std_msgs/String\"}");
+		            rosPublisher.sendMessage("{\"op\":\"advertise\",\"topic\":\"/config_targets\",\"type\":\"std_msgs/String\"}");
+		            // wait 5 seconds for messages from websocket
+		            Thread.sleep(5000);
+
+		        } catch (InterruptedException ex) {
+		            System.err.println("InterruptedException exception: " + ex.getMessage());
+		        } catch (URISyntaxException ex) {
+		            System.err.println("URISyntaxException exception: " + ex.getMessage());
+		        }
+			}
+		});
 	
 		
 		graphFrame.add(btn1);
@@ -293,12 +349,14 @@ public class DesignAssistant {
 		graphFrame.add(btn3);
 		graphFrame.add(btn4);
 		graphFrame.add(btn5);
+		graphFrame.add(btn6);
 		
 		btn1.setBounds(xMax, yMin, 150, 30);
 		btn2.setBounds(xMax, yMin+50, 150, 30);
 		btn3.setBounds(xMax, yMin+100, 150, 30);
 		btn4.setBounds(xMax, yMin+150, 150, 30);
 		btn5.setBounds(xMax, yMin+200, 150, 30);
+		btn6.setBounds(xMax, yMin+250, 150, 30);
 		
 		graphFrame.addWindowListener(
 				new WindowAdapter() { 
@@ -405,16 +463,25 @@ public class DesignAssistant {
 							try{
 								//System.out.println("THREADSTART");
 								String[] agentConfigs = CollaborativeAgent.getLocalConfig(currentConfig.getBinaryOneHot());
+//								double maxScience = 0.0;
+//								String maxScienceConfig = "";
 								for(int i = 0; i < agentConfigs.length && !clear_screen; i++) {
 									Configuration agentConfiguration = new Configuration(agentConfigs[i]);
 									double[] point = thisAssistant.evaluateAgentArchitecture(agentConfiguration);
 									GraphPoint agentPoint = new GraphPoint(agentConfiguration, point[0]*4000, point[1]/12.0, xMin, xMax, yMin, yMax);
 									agentPoint.fromAgent = true;
 									graphDisplayComponent.addGeneratedGraphPoint(agentPoint);
-									String configString = agentPoint.getConfig().getBinaryString();
 									double science = agentPoint.x_dim/4000;
 									double cost = agentPoint.y_dim*12;
+									String configString = agentPoint.getConfig().getBinaryString();
+									StringBuilder msg = new StringBuilder("{\"op\":\"publish\",\"topic\":\"/configs\","
+											+ "\"msg\":{\"data\":\"{\\\"config\\\":\\\"");
+									msg.append(configString);
+									msg.append("\\\",\\\"science\\\":"+science+",\\\"cost\\\":"+cost+"}\"}}");
 									logger.info(AGENT_EVENT + logDelimiter + configString + logDelimiter + science + logDelimiter + cost);
+									
+									System.out.println("Sending target config:"+msg.toString());
+									rosPublisher.sendMessage(msg.toString());
 								}
 								
 								CollaborativeAgent.agentLock = false;
@@ -469,7 +536,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(1);
+        AE.init(4);
        // agentAE.init(1);
 	}
 	

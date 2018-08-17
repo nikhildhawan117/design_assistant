@@ -1,5 +1,7 @@
 package designAssistantCore;
 import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.*;
 import java.awt.*;
 import TUIO.*;
@@ -41,6 +43,19 @@ public class TuioBlockListener implements TuioListener{
 	public void addTuioObject(TuioObject tobj) {
 		TuioBlock tb = new TuioBlock(tobj);
 		blockList.put(tobj.getSessionID(), tb);	
+		StringBuilder blockString = new StringBuilder("{\"op\":\"publish\",\"topic\":\"/blocks\","
+				+ "\"msg\":{\"data\":\"[");
+		String prefix="";
+		for (final Map.Entry<Long, TuioBlock> entry : blockList.entrySet()){
+			TuioBlock block = entry.getValue();
+			blockString.append(prefix);
+			blockString.append("{\\\"x\\\":"+block.getX()+",\\\"y\\\":"+block.getY()+",\\\"id\\\":"+block.getSymbolID()+"}");
+			prefix=",";
+		}
+		blockString.append("]\"}}");
+		if(DesignAssistant.rosPublisher !=null){
+			DesignAssistant.rosPublisher.sendMessage(blockString.toString());
+		}
 		//prevConfig = currentConfig;
 		//currentConfig = new Configuration(blockList);
 
@@ -50,6 +65,19 @@ public class TuioBlockListener implements TuioListener{
 	public void updateTuioObject(TuioObject tobj) {
 		TuioBlock tb = blockList.get(tobj.getSessionID());
 		tb.update(tobj);
+		StringBuilder blockString = new StringBuilder("{\"op\":\"publish\",\"topic\":\"/blocks\","
+				+ "\"msg\":{\"data\":\"[");
+		String prefix="";
+		for (final Map.Entry<Long, TuioBlock> entry : blockList.entrySet()){
+			TuioBlock block = entry.getValue();
+			blockString.append(prefix);
+			blockString.append("{\\\"x\\\":"+block.getX()+",\\\"y\\\":"+block.getY()+",\\\"id\\\":"+block.getSymbolID()+"}");
+			prefix=",";
+		}
+		blockString.append("]\"}}");
+		if(DesignAssistant.rosPublisher !=null){
+			DesignAssistant.rosPublisher.sendMessage(blockString.toString());
+		}
 		//prevConfig = currentConfig;
 		//currentConfig = new Configuration(blockList);
 	}
@@ -57,6 +85,19 @@ public class TuioBlockListener implements TuioListener{
 	@Override
 	public void removeTuioObject(TuioObject tobj) {
 		blockList.remove(tobj.getSessionID());
+		StringBuilder blockString = new StringBuilder("{\"op\":\"publish\",\"topic\":\"/blocks\","
+				+ "\"msg\":{\"data\":\"[");
+		String prefix="";
+		for (final Map.Entry<Long, TuioBlock> entry : blockList.entrySet()){
+			TuioBlock block = entry.getValue();
+			blockString.append(prefix);
+			blockString.append("{\\\"x\\\":"+block.getX()+",\\\"y\\\":"+block.getY()+",\\\"id\\\":"+block.getSymbolID()+"}");
+			prefix=",";
+		}
+		blockString.append("]\"}}");
+		if(DesignAssistant.rosPublisher !=null){
+			DesignAssistant.rosPublisher.sendMessage(blockString.toString());
+		}
 	}
 
 	@Override
@@ -99,6 +140,8 @@ public class TuioBlockListener implements TuioListener{
 	public void refresh(TuioTime ftime) {
 		prevConfig = currentConfig;
 		currentConfig = new Configuration(blockList);
+		
+		
 		synchronized(this) {
 		update_flag = true;
 		this.notifyAll();
