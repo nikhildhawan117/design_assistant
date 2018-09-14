@@ -200,12 +200,13 @@ public class Configuration {
 		int init_padding = 10;
 		//padding between markers
 		int between_padding = 15;
+		int numColsLeftPadding = 2;
 		int numRows = (orbitHeight - init_padding)/(TuioBlock.block_size+between_padding);
-		int numCols = orbit_space_width/(TuioBlock.block_size+5);
+		int numCols = orbit_space_width/(TuioBlock.block_size+5)-numColsLeftPadding;
 		Shape s = new Rectangle2D.Float(0,0,TuioBlock.block_size,TuioBlock.block_size);
 		Color originalColor = g.getColor();
 		for(int i = 0; i < numOrbits; i++) {
-			int x = between_padding;
+			int x = between_padding+numColsLeftPadding*(TuioBlock.block_size+5);
 			int y = i*orbitHeight+init_padding+between_padding;
 			int k = 0;
 			for(int j = 0; j < orbits[i].length(); j++) {
@@ -218,9 +219,9 @@ public class Configuration {
 				((Graphics2D)g).draw(s);
 				((Graphics2D)g).setStroke(oldStroke);
 				//10 and 20 represent position of letter (instrument type) in square
-				g.drawString(orbits[i].substring(j, j+1),x+10,y+50);
+				//g.drawString(orbits[i].substring(j, j+1),x+10,y+50);
 				//this is gross but we are indexing the image array by the letter
-				//g.drawImage(TableComponent.symbols.get((int)orbits[i].substring(j, j+1).charAt(0)-(int)'A'),x,y, null);
+				g.drawImage(TableComponent.sensorSymbols.get((int)orbits[i].substring(j, j+1).charAt(0)-(int)'A'),x,y, null);
 				x+= (between_padding+TuioBlock.block_size);
 				k++;
 				if(k>numCols) {

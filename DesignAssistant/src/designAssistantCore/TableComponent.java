@@ -17,9 +17,11 @@ public class TableComponent extends JComponent{
 	private Hashtable<Long,TuioBlock> blockList;
 	public static int width, height;
 	public static int numOrbits = 5;
-	public static ArrayList<Image> symbols;
+	public static ArrayList<Image> sensorSymbols;
+	public static ArrayList<Image> orbitSymbols;
 	private float scale = 1.0f;
-	private Color[] orbitColors = {Color.blue, new Color(0,30,0)};
+	//private Color[] orbitColors = {Color.blue, new Color(0,30,0)};
+	private Color[] orbitColors = {Color.black, Color.black};
 	Configuration currentConfig;
 	Configuration prevConfig;
 	//invariant currentSelectedPoint must always point to the same object as in GraphComponent
@@ -30,20 +32,22 @@ public class TableComponent extends JComponent{
 		this.blockList = blockList;
 		this.currentConfig = new Configuration(blockList);
 		this.prevConfig = new Configuration(blockList);
-		symbols = new ArrayList<Image>();
+		sensorSymbols = new ArrayList<Image>();
 		try{
-			File  directory = new File("symbols");
+			File  directory = new File("sensorSymbols");
 			for (File file : directory.listFiles())
 			{
 			    if(file.getName().toLowerCase().endsWith(".jpg"))
 			    {
-			    	symbols.add(ImageIO.read(file).getScaledInstance(TuioBlock.block_size, TuioBlock.block_size,Image.SCALE_DEFAULT));
+			    	sensorSymbols.add(ImageIO.read(file).getScaledInstance(TuioBlock.block_size, TuioBlock.block_size,Image.SCALE_DEFAULT));
 			    }
 			}
 		}
 		catch(IOException e){
-			System.out.println("Problem Loading Images");
+			System.out.println("Problem Loading Sensor Images");
 		}
+		
+		
 	}
 	
 	
@@ -72,6 +76,31 @@ public class TableComponent extends JComponent{
 		g.setFont(newFont);
 		
 		//paint the orbits and orbit lists
+		double symbolScale = orbitHeight/914.0; //914 is the height of the tallest orbit symbol (for now)
+		orbitSymbols = new ArrayList<Image>();
+		ArrayList<Image> reorderedOrbitSymbols = new ArrayList<Image>();
+		int[] orbitOrder = {2,4,3,5,1};
+		try{
+			File  directory = new File("orbitSymbols");
+			for (File file : directory.listFiles())
+			{
+			    if(file.getName().toLowerCase().endsWith(".png"))
+			    {
+			    	BufferedImage nextSymbol = ImageIO.read(file);
+			    	orbitSymbols.add(nextSymbol.getScaledInstance((int)(symbolScale*nextSymbol.getWidth()), 
+			    			(int)(symbolScale*nextSymbol.getHeight()),Image.SCALE_DEFAULT));
+			    }
+			}
+			for (int i=0; i<orbitSymbols.size(); i++){
+				reorderedOrbitSymbols.add(orbitSymbols.get(orbitOrder[i]-1));
+			}
+		}
+		catch(IOException e){
+			System.out.println("Problem Loading Orbit Images");
+		}
+		
+		
+		
 		int j = 0;
 		for(int i=0; i<=this.height-orbitHeight; i+= orbitHeight){
 			int orbitIndex = i/orbitHeight;
@@ -79,7 +108,10 @@ public class TableComponent extends JComponent{
 			g.setColor(this.orbitColors[colorIndex]);
 			g.fillRect(0, i, orbitWidth, orbitHeight);
 			g.setColor(Color.white);
-			g.drawString(currentConfig.toFancyString()[j], 10, i+orbitHeight/2+80);
+			g.drawRect(0, i, orbitWidth, orbitHeight);
+			//g.drawString(currentConfig.toFancyString()[j], 10, i+orbitHeight/2+80);
+			Image nextOSymbol = reorderedOrbitSymbols.get(j);
+			g.drawImage(nextOSymbol,10,i+(orbitHeight-nextOSymbol.getHeight(null)), null);
 			j++;
 			
 		}
@@ -91,7 +123,7 @@ public class TableComponent extends JComponent{
 		g.setColor(Color.black);
 		g.fillRect(orbitWidth, 0, width-orbitWidth, height);
 		g.setColor(Color.white);
-		g.drawString("Global Filters", (int)(orbitWidth+(width-orbitWidth)*0.13), height/2);
+		//g.drawString("Global Filters", (int)(orbitWidth+(width-orbitWidth)*0.13), height/2);
 		
 		/*
 		for(int i = 0; i < 8; i++) {

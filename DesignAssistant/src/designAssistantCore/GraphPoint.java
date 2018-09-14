@@ -96,20 +96,24 @@ public class GraphPoint extends JComponent{
 	}
 	
 	public void paint(Graphics g) {
-		g.setColor(Color.getHSBColor(0.75f,(float)(index)/GraphComponent.numUserPts, 1.0f));
-		
+		int size = diameter;
+		//g.setColor(Color.getHSBColor(0.75f,(float)(index)/GraphComponent.numUserPts, 1.0f));
+		//user-generated points
+		g.setColor(Color.getHSBColor(0.75f,1.0f, 1.0f));
+		//initial points(none by default)
 		if(isPreData) 
 			g.setColor(Color.lightGray);
-				
+		//computer-generated points (agent)		
 		if(fromAgent)
 			g.setColor(Color.lightGray);
 		
 		//if(isInFilter) 
 			//g.setColor(Color.blue.brighter());
-		
+		//current point on the table
 		if(isCurrPoint) 
 			g.setColor(Color.getHSBColor(0.0f, 1.0f, 1.0f));
-		
+			size = diameter;
+		//previous human-explored point
 		if(isPrevPoint) {
 			g.setColor(Color.getHSBColor(0.0f, 0.5f, 1.0f));
 			
@@ -118,7 +122,7 @@ public class GraphPoint extends JComponent{
 			
 		
 		//Draw the graph point
-		int size = diameter;
+		
 		g.fillOval(xPlot-2, yPlot-2, size+4,size+4);
 		
 		if(isSelected) {
@@ -132,7 +136,7 @@ public class GraphPoint extends JComponent{
 	}
 	
 	public int[] getBoundaries() {
-		int[] bounds = {xPlot,yPlot,diameter+4};  
+		int[] bounds = {xPlot-2,yPlot-2,diameter+4};  
 		return bounds;
 	}
 	

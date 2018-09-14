@@ -26,6 +26,7 @@ import rbsa.eoss.ArchitectureGenerator;
 import rbsa.eoss.Result;
 import rbsa.eoss.ResultManager;
 import rbsa.eoss.local.Params;
+import redis.clients.jedis.Jedis;
 
 public class DesignAssistant {
 	
@@ -45,7 +46,7 @@ public class DesignAssistant {
 	private final int TABLE_DISPLAY_INDEX = 0;
 	private final int GRAPH_DISPLAY_INDEX = 1;
 	
-	
+	private Jedis EOSSCache;
 
 	private final String preDataFile = "./EOSS_data.csv";
 	public static final String CLICK_EVENT = "CLICK_EVENT";
@@ -123,6 +124,7 @@ public class DesignAssistant {
 //            System.err.println("URISyntaxException exception: " + ex.getMessage());
 //        }
 //    
+		EOSSCache = new Jedis("localhost");
 		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
@@ -544,7 +546,15 @@ public class DesignAssistant {
 	 * returns [science, cost] given a Configuration
 	 */
 	public double[] evaluateArchitecture(Configuration config) {
-		
+		//try to lookup before eval
+		String resultStr = EOSSCache.get(config.getBinaryString());
+		if(resultStr!=null){
+			//parse result and return
+			String [] parsedResults = resultStr.split(",");
+			double science = Double.parseDouble(parsedResults[0]);
+			double cost = Double.parseDouble(parsedResults[1]);
+			return new double[] {science,cost};
+		}
 		ArrayList<String> inputArch = new ArrayList<String>(Arrays.asList(config.getConfig()));
        
 		for(int i = 0; i < inputArch.size(); i++) {
@@ -576,7 +586,9 @@ public class DesignAssistant {
 			}
 			//System.out.println("DONE");
             System.out.println(config.getBinaryString() + "," + science + "," + cost);
-    		return new double[] {science, cost};
+            //save the evaluation
+            EOSSCache.set(config.getBinaryString(), Double.toString(science)+","+Double.toString(cost));
+            return new double[] {science, cost};
         }
         catch(ArrayIndexOutOfBoundsException e) {
         	return new double[] {0, 0};
@@ -667,7 +679,6 @@ public class DesignAssistant {
 	}
 	
 public static void main(String argv[]) {
-	
 		DesignAssistant orbitDesignAssistant = new DesignAssistant();
 		TuioClient client = null;
  
