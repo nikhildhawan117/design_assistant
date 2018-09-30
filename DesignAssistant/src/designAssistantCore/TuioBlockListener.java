@@ -10,15 +10,19 @@ public class TuioBlockListener implements TuioListener{
 	
 	//this class writes to blockList
 	private Hashtable<Long,TuioBlock> blockList;
-
+	private ArrayList<Hashtable<Long,TuioBlock>> blockListBuffer;
 	//this class writes to currentConfig and prevConfig
 	private Configuration currentConfig;
 	private Configuration prevConfig;
 	private boolean update_flag = false;
+	private int counter = 0;
+	private int sample_period = 1;
+	private int sample_threshold = 1;
 	
 	public TuioBlockListener(Hashtable<Long,TuioBlock> blockList, Configuration currentConfig, Configuration prevConfig) {
 
 		this.blockList = blockList;
+		this.blockListBuffer = new ArrayList<Hashtable<Long,TuioBlock>>(sample_period);
 		this.currentConfig = currentConfig;
 		this.prevConfig = prevConfig;
 	}
@@ -138,8 +142,22 @@ public class TuioBlockListener implements TuioListener{
 
 	@Override
 	public void refresh(TuioTime ftime) {
+		if(sample_period==1){
+			prevConfig = currentConfig;
+			currentConfig = new Configuration(blockList);
+			synchronized(this){
+				update_flag = true;
+				this.notifyAll();
+			}
+			return;
+		}
+		if(counter++ < sample_period){
+			blockListBuffer.add(blockList);
+			return;
+		}
+		counter = 0;
 		prevConfig = currentConfig;
-		currentConfig = new Configuration(blockList);
+		currentConfig = new Configuration(blockListBuffer,sample_threshold);
 		
 		
 		synchronized(this) {

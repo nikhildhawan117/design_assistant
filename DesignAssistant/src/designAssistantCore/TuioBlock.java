@@ -14,35 +14,43 @@ import TUIO.*;
 public class TuioBlock extends TuioObject{
 
 	private Shape outline;
-	
+	private double minDx = 250;
+	private double minDy = 250;
+	private int samplePeriod = 1;
+	private float[] xBuffer;
+	private float[] yBuffer;
+	private int sampleCounter;
 	//These are default value. Set values in Design Assistant.
 	public static int block_size = 105;
 	public static int table_size = 760;
 	//public static final double ax_x = -1.706548908;
-	public static final double ax_x = -1.55076548908;
+	public static final double ax_x = -1.82076548908;
 	//public static final double ax_y = - .07869167392;
 	//public static final double ax_y = - .08169167392;
-	public static final double ax_y = - .0109167392;
+	public static final double ax_y = - .01709167392;
 	//public static final double cx = 2091.810068;
-	public static final double cx = 1200.810068;
+	public static final double cx = 1550.810068;
+	
 
-
-	public static final double ay_x =  -.060770692435;
+	public static final double ay_x =  0.0670692435;
 	//public static final double ay_y = 1.662719449;
-	public static final double ay_y = 1.5569449;
+	public static final double ay_y = 1.8569449;
 	//public static final double cy =  - 161.0721432;
-	public static final double cy =  - 360.0721432;
+	public static final double cy =  -250.0721432;
 	public double x_pos;
 	public double y_pos;
 	
 	public TuioBlock(TuioObject tobj) {
 		super(tobj);
+		xBuffer = new float[samplePeriod];
+		yBuffer = new float[samplePeriod];
+		sampleCounter=0;
 		outline = new RoundRectangle2D.Float(-block_size/2,-block_size/2,(float)TuioBlock.block_size,(float)TuioBlock.block_size,(float)TuioBlock.block_size/8,(float)TuioBlock.block_size/8);
 		//outline = new Rectangle2D.Float(-block_size/2,-block_size/2,block_size,block_size);
 		AffineTransform transform = new AffineTransform();
 		transform.translate(xpos,ypos);
 		
-		transform.rotate(angle,xpos,ypos);
+		//transform.rotate(angle,xpos,ypos);
 		outline = transform.createTransformedShape(outline);
 		x_pos = outline.getBounds2D().getX();
 		y_pos = outline.getBounds2D().getY();
@@ -99,6 +107,7 @@ public class TuioBlock extends TuioObject{
 		
 		float Xpos = xpos*width;
 		float Ypos = ypos*height;
+		//reSystem.out.println("Cur_pos:"+xpos+","+ypos);
 		float scale = height/(float)table_size;
 
 		AffineTransform trans = new AffineTransform();
@@ -118,7 +127,7 @@ public class TuioBlock extends TuioObject{
 		setCoords(x_trans, y_trans);
 		g.draw(s);
 		
-		g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
+		//g.drawString(toTuioLetter(),(int)x_trans-10,(int)y_trans);
 		
 	}
 	
@@ -130,16 +139,32 @@ public class TuioBlock extends TuioObject{
 		float da = tobj.getAngle() - angle;
 
 		if ((dx!=0) || (dy!=0)) {
+		//if((Math.abs(dx)>minDx) || (Math.abs(dy)>minDy)) {
 			AffineTransform trans = AffineTransform.getTranslateInstance(dx,dy);
 			outline = trans.createTransformedShape(outline);
 		}
 		
-		if (da!=0) {
-			AffineTransform trans = AffineTransform.getRotateInstance(-da,tobj.getX(),tobj.getY());
-			outline = trans.createTransformedShape(outline);
+//		if (da!=0) {
+//			AffineTransform trans = AffineTransform.getRotateInstance(-da,tobj.getX(),tobj.getY());
+//			outline = trans.createTransformedShape(outline);
+//		}
+		if(sampleCounter >= samplePeriod){
+			float xp = 0;
+			float yp = 0;
+			for(int i=0; i<samplePeriod; i++){
+				xp+= xBuffer[i];
+				yp+= yBuffer[i];
+			}
+			xp /= samplePeriod;
+			yp /= samplePeriod;
+			super.update(xp, yp);
+			sampleCounter = 0;
 		}
-
-		super.update(tobj);
+		else{
+			xBuffer[sampleCounter] = tobj.getX();
+			yBuffer[sampleCounter++] = tobj.getY();
+		}
+		//super.update(tobj);
 	}
 	
 	public static void setSize(int size) {

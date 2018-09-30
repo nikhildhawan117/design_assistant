@@ -238,8 +238,7 @@ public class DesignAssistant {
 		graphFrame.setLocation(50+gcBounds.x, 5+gcBounds.y);
 		graphFrame.setSize(1600, yMax+100);
 		graphFrame.setResizable(true);
-		graphFrame.getContentPane().setBackground(Color.WHITE);
-		
+		graphFrame.getContentPane().setBackground(Color.getHSBColor(0.58f,0.18f, 0.16f));
 		JButton btn1 = new JButton("User Exploration");
 		JButton btn2 = new JButton("Computer Exploration");
 		JButton btn3 = new JButton("Collaborative Exploration");
@@ -278,8 +277,8 @@ public class DesignAssistant {
 		});
 		btn3.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
-				makeCipher(6);
-				orbitScrambleDist = 2;
+				makeCipher(0);
+				orbitScrambleDist = 0;
 				t1 = false;
 				//GraphPoint.t1 = false;
 				t2 = false;
@@ -538,8 +537,8 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(4);
-       // agentAE.init(1);
+        AE.init(1);
+        agentAE.init(1);
 	}
 	
 	/*

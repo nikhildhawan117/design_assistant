@@ -100,22 +100,26 @@ public class GraphPoint extends JComponent{
 		//g.setColor(Color.getHSBColor(0.75f,(float)(index)/GraphComponent.numUserPts, 1.0f));
 		//user-generated points
 		g.setColor(Color.getHSBColor(0.75f,1.0f, 1.0f));
+		g.setColor(Color.getHSBColor(0.21f, 0.18f, 0.54f));
 		//initial points(none by default)
-		if(isPreData) 
+		if(isPreData){ 
 			g.setColor(Color.lightGray);
+			g.setColor(Color.getHSBColor(0.75f,1.0f, 1.0f));
+		}
 		//computer-generated points (agent)		
-		if(fromAgent)
+		if(fromAgent){
 			g.setColor(Color.lightGray);
-		
+			g.setColor(Color.getHSBColor(0.79f,0.30f, 0.54f));
+		}
 		//if(isInFilter) 
 			//g.setColor(Color.blue.brighter());
 		//current point on the table
 		if(isCurrPoint) 
-			g.setColor(Color.getHSBColor(0.0f, 1.0f, 1.0f));
+			g.setColor(Color.getHSBColor(0.25f, 1.0f, 0.78f));
 			size = diameter;
 		//previous human-explored point
 		if(isPrevPoint) {
-			g.setColor(Color.getHSBColor(0.0f, 0.5f, 1.0f));
+			g.setColor(Color.getHSBColor(0.26f,0.82f, 0.45f));
 			
 		}
 		

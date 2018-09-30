@@ -1,6 +1,7 @@
 package designAssistantCore;
 import java.awt.Graphics;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -35,6 +36,13 @@ public class Configuration {
 		populateOrbits(blockList);
 	}
 	
+	public Configuration(ArrayList<Hashtable<Long, TuioBlock>>blockLists,int threshold){
+		orbits = new String[numOrbits];
+		physicalButtons = "";
+		clusters = new LinkedList<Cluster>();
+		populateOrbits(blockLists, threshold);
+	}
+	
 	public Configuration(ArrayList<String> input_arch) {
 		input_arch.toArray(orbits);
 		physicalButtons = "";
@@ -53,6 +61,51 @@ public class Configuration {
 			orbits[i] = "";
 	}
 	
+	private void populateOrbits(ArrayList<Hashtable<Long,TuioBlock>> blockLists, int threshold){
+		//note that this method doesn't account for multiple identical instruments in an orbit very well
+		makeEmpty();
+		int largestHeight = orbit_space_height-(orbit_space_height%orbits.length);
+		//we will divide this into our orbits
+		int orbitHeight = largestHeight/orbits.length;
+		ArrayList<Hashtable<String,Integer>> orbitFreqTables = new ArrayList<Hashtable<String,Integer>>(orbits.length);
+		for(int i=0; i<orbits.length; i++){
+			orbitFreqTables.add(new Hashtable<String,Integer>());
+		}
+		for(int i=0; i<blockLists.size(); i++){
+			Enumeration<TuioBlock> tuioBlocks = blockLists.get(i).elements();
+			while (tuioBlocks.hasMoreElements()) {
+				TuioBlock tblock = tuioBlocks.nextElement();
+				
+				double x = tblock.x_pos;
+				double y = tblock.y_pos;
+				if(tblock.toTuioLetter().compareTo(Character.toString((char)('A' + numInstruments))) < 0) {
+					//iterates through orbits until either tblock has been appropriately
+					//placed in orbits or orbits has been full iterated through
+					for(int j = 0; j < orbits.length; j++)  {
+						
+						Hashtable<String,Integer> orbitFreq = orbitFreqTables.get(j);
+						if(y<orbitHeight*(j+1) && y>orbitHeight*j && x < orbit_space_width && x > shelfspace_width) {
+							//this block is in this orbit
+							//check if we've exceeded the min threshold to insert into the config
+							Integer count = orbitFreq.get(tblock.toTuioLetter());
+							if(count!=null && count == threshold-1){ //only add it once (hence why == not >=)
+								orbits[j] += tblock.toTuioLetter();
+								orbitFreq.put(tblock.toTuioLetter(),count+1);
+							}
+							else{
+								if(count==null){
+									count = 0;
+								}
+								orbitFreq.put(tblock.toTuioLetter(),count+1);
+							}
+							break;
+						}
+					}
+				}
+				
+			}
+		}
+	}
 
 	private void populateOrbits(Hashtable<Long,TuioBlock> blockList) {
 		makeEmpty();
@@ -200,7 +253,7 @@ public class Configuration {
 		int init_padding = 10;
 		//padding between markers
 		int between_padding = 15;
-		int numColsLeftPadding = 2;
+		int numColsLeftPadding = 3;
 		int numRows = (orbitHeight - init_padding)/(TuioBlock.block_size+between_padding);
 		int numCols = orbit_space_width/(TuioBlock.block_size+5)-numColsLeftPadding;
 		Shape s = new Rectangle2D.Float(0,0,TuioBlock.block_size,TuioBlock.block_size);

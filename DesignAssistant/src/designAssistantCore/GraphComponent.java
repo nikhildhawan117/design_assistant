@@ -113,21 +113,24 @@ public class GraphComponent extends JComponent{
 	}
 	
 	public void init(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g;
 		//Draw Graph Components 
-		g.setColor(Color.black);
-		g.drawLine(xMin, yMin, xMin, yMax); //y axis
-		g.drawLine(xMin, yMax, xMax, yMax); //x axis
-		g.drawString("Science Questions Answered", xMax/2, yMax+40);
-		g.drawString("Cost (millions)", xMin/2, yMin/2);
-		g.drawString("Mode: "+ mode, xMax/2, yMin+40);
+		g2.setColor(Color.getHSBColor(0.17f,0.08f, 0.86f));
+		g2.setStroke(new BasicStroke(5));
+		g2.drawLine(xMin, yMin, xMin, yMax); //y axis
+		g2.drawLine(xMin, yMax, xMax, yMax); //x axis
+		g.setFont(new Font("Helvetica", Font.PLAIN, 18)); 
+		g2.drawString("Science Questions Answered", xMax/2, yMax+49);
+		g2.drawString("Cost (millions)", xMin/2, yMin/2+2);
+		//g.drawString("Mode: "+ mode, xMax/2, yMin+40);
 		//tick marks
 		for(int xTick = xMin; xTick < xMax; xTick+=xTickWidth){
-			g.drawLine(xTick, yMax+5, xTick, yMax-5);
-			g.drawString(String.format("%.1f%s",((1/xScale)*(xTick-xMin))*100, "%"), xTick-10, yMax+20);
+			g2.drawLine(xTick, yMax+5, xTick, yMax-5);
+			g2.drawString(String.format("%.1f%s",((1/xScale)*(xTick-xMin))*100, "%"), xTick-10, yMax+30);
 		}
 		for(int yTick = yMin; yTick < yMax; yTick+=yTickWidth){
-			g.drawLine(xMin+5, yTick, xMin-5, yTick);
-			g.drawString(String.format("%s%d","$",(int)(1/yScale)*(yMax-yTick)),xMin-55,yTick+5);
+			g2.drawLine(xMin+5, yTick, xMin-5, yTick);
+			g2.drawString(String.format("%s%d","$",(int)(1/yScale)*(yMax-yTick)),xMin-75,yTick+5);
 		}
 		
 	}
