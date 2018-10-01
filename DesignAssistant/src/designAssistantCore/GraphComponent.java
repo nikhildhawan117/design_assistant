@@ -90,11 +90,14 @@ public class GraphComponent extends JComponent{
 	 * automatically sets isCurrPoint and isPrevPoint to false
 	 */
 	public synchronized void addGeneratedGraphPoint(GraphPoint gp) {
+		
 		gp.isCurrPoint = false;
 		gp.isPrevPoint = false;
 		add(gp);
 		getAllGraphPoints().add(gp);
-		
+		if(gp.fromAgent==true){
+			return; //if agent point, add but not to pixelmap (and don't plot in graphpoint)
+		}
         int [] bounds = gp.getBoundaries();
         for(int i=bounds[0]; i<=(bounds[0]+bounds[2]); i++){
         	for(int j=bounds[1]; j<=(bounds[1]+bounds[2]); j++){
@@ -121,16 +124,17 @@ public class GraphComponent extends JComponent{
 		g2.drawLine(xMin, yMax, xMax, yMax); //x axis
 		g.setFont(new Font("Helvetica", Font.PLAIN, 18)); 
 		g2.drawString("Science Questions Answered", xMax/2, yMax+49);
-		g2.drawString("Cost (millions)", xMin/2, yMin/2+2);
+		g2.drawString("Cost (billions)", xMin/2, yMin/2+2);
 		//g.drawString("Mode: "+ mode, xMax/2, yMin+40);
 		//tick marks
 		for(int xTick = xMin; xTick < xMax; xTick+=xTickWidth){
 			g2.drawLine(xTick, yMax+5, xTick, yMax-5);
-			g2.drawString(String.format("%.1f%s",((1/xScale)*(xTick-xMin))*100, "%"), xTick-10, yMax+30);
+			int scienceQuestions = (int)(((1/xScale)*(xTick-xMin))*400);
+			g2.drawString(Integer.toString(scienceQuestions), xTick-10, yMax+30);
 		}
 		for(int yTick = yMin; yTick < yMax; yTick+=yTickWidth){
 			g2.drawLine(xMin+5, yTick, xMin-5, yTick);
-			g2.drawString(String.format("%s%d","$",(int)(1/yScale)*(yMax-yTick)),xMin-75,yTick+5);
+			g2.drawString(String.format("%s%.2f","$",(1/yScale)*(yMax-yTick)*0.001),xMin-75,yTick+5);
 		}
 		
 	}

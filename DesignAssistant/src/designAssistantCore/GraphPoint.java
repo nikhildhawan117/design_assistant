@@ -96,6 +96,7 @@ public class GraphPoint extends JComponent{
 	}
 	
 	public void paint(Graphics g) {
+		if(isPreData || fromAgent) return; //dont plot nonuser points
 		int size = diameter;
 		//g.setColor(Color.getHSBColor(0.75f,(float)(index)/GraphComponent.numUserPts, 1.0f));
 		//user-generated points
