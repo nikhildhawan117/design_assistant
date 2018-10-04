@@ -24,22 +24,25 @@ public class TuioBlock extends TuioObject{
 	public static int block_size = 105;
 	public static int table_size = 760;
 	//public static final double ax_x = -1.706548908;
-	public static final double ax_x = -1.82076548908;
+	public static final double ax_x = -1.52076548908;
 	//public static final double ax_y = - .07869167392;
 	//public static final double ax_y = - .08169167392;
 	public static final double ax_y = - .01709167392;
 	//public static final double cx = 2091.810068;
-	public static final double cx = 1550.810068;
+	public static final double cx = 1350.810068;
 	
 
 	public static final double ay_x =  0.0670692435;
 	//public static final double ay_y = 1.662719449;
-	public static final double ay_y = 1.8569449;
+	public static final double ay_y = 1.60569449;
 	//public static final double cy =  - 161.0721432;
-	public static final double cy =  -250.0721432;
+	public static final double cy =  -150.0721432;
+	
+	public static final double xOffset = 50;;
+	public static final double yOffset = 250;
+	
 	public double x_pos;
 	public double y_pos;
-	
 	public TuioBlock(TuioObject tobj) {
 		super(tobj);
 		xBuffer = new float[samplePeriod];
