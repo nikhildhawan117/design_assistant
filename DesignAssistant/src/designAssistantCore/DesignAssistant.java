@@ -431,6 +431,13 @@ public class DesignAssistant {
 								double science = nextPoint.x_dim/4000;
 								double cost = nextPoint.y_dim*12;
 								logger.info(EXPLORE_EVENT + logDelimiter + configString + logDelimiter + science + logDelimiter + cost);
+								StringBuilder msg = new StringBuilder("{\"op\":\"publish\",\"topic\":\"/configs\","
+										+ "\"msg\":{\"data\":\"{\\\"config\\\":\\\"");
+								msg.append(configString);
+								msg.append("\\\",\\\"science\\\":"+science+",\\\"cost\\\":"+cost+"}\"}}");
+								
+								System.out.println("Sending table config:"+msg.toString());
+								rosPublisher.sendMessage(msg.toString());
 								}
 							} catch(NullPointerException ce) {
 								return;

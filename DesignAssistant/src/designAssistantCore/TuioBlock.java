@@ -24,19 +24,23 @@ public class TuioBlock extends TuioObject{
 	public static int block_size = 105;
 	public static int table_size = 760;
 	//public static final double ax_x = -1.706548908;
-	public static final double ax_x = -1.82076548908;
+	public static final double ax_x = -1.52076548908;
 	//public static final double ax_y = - .07869167392;
 	//public static final double ax_y = - .08169167392;
 	public static final double ax_y = - .01709167392;
 	//public static final double cx = 2091.810068;
-	public static final double cx = 1550.810068;
+	public static final double cx = 1350.810068;
 	
 
 	public static final double ay_x =  0.0670692435;
 	//public static final double ay_y = 1.662719449;
-	public static final double ay_y = 1.8569449;
+	public static final double ay_y = 1.60569449;
 	//public static final double cy =  - 161.0721432;
-	public static final double cy =  -250.0721432;
+	public static final double cy =  -150.0721432;
+	
+	public static final double xOffset = 50;;
+	public static final double yOffset = 250;
+	
 	public double x_pos;
 	public double y_pos;
 	
@@ -54,6 +58,7 @@ public class TuioBlock extends TuioObject{
 		outline = transform.createTransformedShape(outline);
 		x_pos = outline.getBounds2D().getX();
 		y_pos = outline.getBounds2D().getY();
+//		System.out.println("X Position: " + x_pos + " Y Position: "+y_pos);
 	}
 	
 	public String toTuioLetter() {
@@ -107,7 +112,7 @@ public class TuioBlock extends TuioObject{
 		
 		float Xpos = xpos*width;
 		float Ypos = ypos*height;
-		//reSystem.out.println("Cur_pos:"+xpos+","+ypos);
+		System.out.println("Cur_pos:"+xpos+","+ypos);
 		float scale = height/(float)table_size;
 
 		AffineTransform trans = new AffineTransform();
@@ -117,6 +122,8 @@ public class TuioBlock extends TuioObject{
 		Shape s = trans.createTransformedShape(outline);
 		double x_trans = ax_x*s.getBounds2D().getX() + ax_y*s.getBounds2D().getY() + cx;
 		double y_trans = ay_x*s.getBounds2D().getX() + ay_y*s.getBounds2D().getY() + cy;
+		//double x_trans = s.getBounds2D().getX()+xOffset;
+		//double y_trans = s.getBounds2D().getY()+yOffset;
 		trans = new AffineTransform();
 		trans.translate(x_trans-s.getBounds2D().getX()-s.getBounds2D().getWidth()/2, 
 				y_trans-s.getBounds2D().getY()-s.getBounds2D().getHeight()/2);
