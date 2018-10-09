@@ -537,7 +537,7 @@ public class DesignAssistant {
         Params params = null;
         String search_clps = "";
         params = new Params(path, "FUZZY-ATTRIBUTES", "test","normal",search_clps);//FUZZY or CRISP
-        AE.init(1);
+        AE.init(4);
         agentAE.init(1);
 	}
 	

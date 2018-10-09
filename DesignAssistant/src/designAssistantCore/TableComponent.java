@@ -79,7 +79,7 @@ public class TableComponent extends JComponent{
 		double symbolScale = orbitHeight/914.0; //914 is the height of the tallest orbit symbol (for now)
 		orbitSymbols = new ArrayList<Image>();
 		ArrayList<Image> reorderedOrbitSymbols = new ArrayList<Image>();
-		int[] orbitOrder = {5,4,3,2,1};//{2,4,3,5,1};
+		int[] orbitOrder = {1,2,3,4,5};//{2,4,3,5,1};
 		try{
 			File  directory = new File("orbitSymbols");
 			for (File file : directory.listFiles())
