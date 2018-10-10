@@ -175,7 +175,6 @@ public class DesignAssistant {
 		//System.out.println("Generating Random Data...");
 		//generateRandomData();
 		//Set up initial filter
-		Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);
 		blockListener = new TuioBlockListener(blockList, currentConfig, prevConfig);
 		
 		showTableWindow();
@@ -409,7 +408,6 @@ public class DesignAssistant {
 			//ensures that calculation and filtering is only done when a new
 			//configuration is created
 			if (!currentConfig.equals(prevConfig)) {
-				Filter.applyFilter(graphDisplayComponent.getAllGraphPoints(), currentConfig);	
 				Configuration nextPointConfig = new Configuration(blockList);
 				if(!t2 && graphDisplayComponent.getMode()=="Exploration" || clear_screen) {
 					

@@ -13,7 +13,6 @@ public class Configuration {
 	
 	private String[] orbits;
 	private String physicalButtons;
-	private LinkedList<Cluster> clusters;
 	public static int numOrbits;
 	public static int orbit_space_width;
 	public static int shelfspace_width;
@@ -25,34 +24,29 @@ public class Configuration {
 	public Configuration() {
 		orbits = new String[numOrbits];
 		physicalButtons = "";
-		clusters = new LinkedList<Cluster>();
 		makeEmpty();
 	}
 	
 	public Configuration(Hashtable<Long,TuioBlock> blockList) {
 		orbits = new String[numOrbits];
 		physicalButtons = "";
-		clusters = new LinkedList<Cluster>();
 		populateOrbits(blockList);
 	}
 	
 	public Configuration(ArrayList<Hashtable<Long, TuioBlock>>blockLists,int threshold){
 		orbits = new String[numOrbits];
 		physicalButtons = "";
-		clusters = new LinkedList<Cluster>();
 		populateOrbits(blockLists, threshold);
 	}
 	
 	public Configuration(ArrayList<String> input_arch) {
 		input_arch.toArray(orbits);
 		physicalButtons = "";
-		clusters = new LinkedList<Cluster>();
 	}
 	
 	public Configuration(String serial_input) {
 		orbits = new String[numOrbits];
 		physicalButtons = "";
-		clusters = new LinkedList<Cluster>();
 		populateOrbits(serial_input);
 	}
 	
@@ -133,43 +127,6 @@ public class Configuration {
 						break;
 					}
 				}
-
-
-				//handles blocks in the global filter zone
-				if(x > orbit_space_width) {
-					//if no clusters yet, create the first cluster containing this block and add to the cluster list
-					if(clusters.size() == 0)
-						clusters.add(new Cluster(tblock, clusterWidthThreshold));
-					//otherwise, check the current clusters to see if it matches any
-					else{
-						boolean clustered = false;
-						//this is in case a single block fits in more than one clusters, in which case we merge them
-						Stack<Cluster> matched = new Stack<Cluster>(); //track which clusters match, to merge
-						//try adding the block to each of the current clusters
-						for(Cluster c : clusters){
-							//if it fits in a current cluster, 
-							if(c.addtoCluster(tblock)){
-								clustered = true;
-								matched.push(c);
-								//System.out.println("Here");
-							}
-						}
-						//if not clustered in any current, create a new cluster
-						if(!clustered){
-							clusters.add(new Cluster(tblock, clusterWidthThreshold));
-						}
-						//otherwise, check to see if we need to merge any
-						else{
-							Cluster primary = matched.pop(); 
-							while(!matched.isEmpty()){
-								Cluster toMerge = matched.pop();
-								primary.mergeCluster(toMerge);
-
-								clusters.remove(toMerge); 
-							}
-						}
-					}
-				}//end handling global filter zone
 			}//end valid checking valid instruments
 			
 			else {
@@ -200,9 +157,7 @@ public class Configuration {
 		return orbits;
 	}
 	
-	public LinkedList<Cluster> getCluster() {
-		return clusters;
-	}
+
 	
 	public String getGlobalInstruments() {
 		return physicalButtons;

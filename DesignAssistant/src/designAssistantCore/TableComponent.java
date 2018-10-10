@@ -163,20 +163,7 @@ public class TableComponent extends JComponent{
 			if (tblock!=null) tblock.paint(g2, width,height);
 		}
 		
-		for (Cluster cluster : currentConfig.getCluster()){
 
-			Stack<Point2D> points = (Stack<Point2D>) cluster.getClusterHull(width,height);
-			GeneralPath polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
-			Point2D start = points.pop();
-			polyline.moveTo(start.x(), start.y());
-			while(!points.isEmpty()){
-				Point2D point = points.pop();
-				polyline.lineTo(point.x(), point.y());
-			}
-			g2.setColor(Color.green);
-			g2.draw(polyline);
-			
-		}
 		
 		
 		
